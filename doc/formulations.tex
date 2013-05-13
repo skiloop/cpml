@@ -1,0 +1,114 @@
+\documentclass[a4paper,10pt]{article}
+\usepackage{amssymb}
+\usepackage[utf8]{inputenc}
+\title{Formulation of Convolutional Perfectly Matched Layer}
+\author{skiloop(skiloop@126.com)}
+\begin{document}
+\maketitle
+\section{Original Formulation}
+Electric fields
+\begin{equation}\label{oEx}
+j\omega\epsilon_{x}E_{x}+\sigma^{e}_{x}E_{x}=\frac{1}{S_{ez}}\frac{\partial H_{z}}{\partial y}-\frac{1}{S_{ez}}\frac{\partial H_{y}}{\partial z}
+\end{equation}
+\begin{equation}\label{oEy}
+j\omega\epsilon_{y}E_{y}+\sigma^{e}_{y}E_{y}=\frac{1}{S_{ex}}\frac{\partial H_{x}}{\partial z}-\frac{1}{S_{ex}}\frac{\partial H_{z}}{\partial x}
+\end{equation}
+\begin{equation}\label{oEz}
+j\omega\epsilon_{z}E_{z}+\sigma^{e}_{z}E_{z}=\frac{1}{S_{ey}}\frac{\partial H_{y}}{\partial x}-\frac{1}{S_{ex}}\frac{\partial H_{x}}{\partial y}
+\end{equation}
+Here
+\begin{equation}
+S_{ei}=1+\frac{\sigma_{pei}}{j\omega\epsilon_{0}}
+\end{equation}
+where $\sigma_{pei}$s are PML conductivities. \newline
+Magnetic fields
+\begin{equation}\label{oHx}
+j\omega\mu_{x}H_{x}+\sigma^{m}_{x}H_{x}=-\frac{1}{S_{mz}}\frac{\partial E_{z}}{\partial y}+\frac{1}{S_{mz}}\frac{\partial E_{y}}{\partial z}
+\end{equation}
+\begin{equation}\label{oHy}
+j\omega\mu_{y}H_{y}+\sigma^{m}_{y}H_{y}=-\frac{1}{S_{mx}}\frac{\partial E_{x}}{\partial z}+\frac{1}{S_{mx}}\frac{\partial E_{z}}{\partial x}
+\end{equation}
+\begin{equation}\label{oHz}
+j\omega\mu_{z}H_{z}+\sigma^{m}_{z}H_{z}=-\frac{1}{S_{my}}\frac{\partial E_{y}}{\partial x}+\frac{1}{S_{mx}}\frac{\partial E_{x}}{\partial y}
+\end{equation}
+Here
+\begin{equation}
+S_{mi}=1+\frac{\sigma_{pmi}}{j\omega\mu_{0}}
+\end{equation}
+\section{Equations in Time Domain}
+Take ($\ref{oEx}$) for example
+\begin{equation}\label{exTD}
+\epsilon_{x}\frac{\partial E_{x}}{\partial t}+\sigma^{e}_{x}E_{x}=\frac{1}{\kappa_{ey}}
+\frac{\partial H_{z}}{\partial y}-\frac{1}{\kappa_{ez}}\frac{\partial H_{y}}{\partial z}+
+\xi_{ey}(t)*\frac{\partial H_{z}}{\partial y}-\xi_{ez}(t)*\frac{\partial H_{y}}{\partial z}
+\end{equation}
+\section{Discrete Formulation}
+Equation ($\ref{exTD}$) can be written in discrete form as follow
+\begin{eqnarray}
+&&\epsilon_{x}(i,j,k)\frac{E^{n+1}_{x}(i,j,k)-E^{n}_{x}(i,j,k)}{\Delta t}
++\sigma^{e}_{x}(i,j,k)\frac{E^{n+1}_{x}(i,j,k)+E^{n}_{x}(i,j,k)}{2}\nonumber\\
+&&=\frac{1}{\kappa_{e y}(i,j,k)}\frac{H^{n+1/2}_{z}(i,j,k)-H^{n}_{z}(i,j-1,k)}{\Delta y}\nonumber\\
+&&-\frac{1}{\kappa_{e z}(i,j,k)}\frac{H^{n+1/2}_{y}(i,j,k)-H^{n}_{y}(i,j,k-1)}{\Delta z}\nonumber\\
+&&+\psi^{n+1/2}_{e x y}(i,j,k)-\psi^{n+1/2}_{e x z}(i,j,k)
+\end{eqnarray}
+Here 
+\begin{equation}\label{psi}
+\psi^{n+1/2}_{e x y}(i,j,k)=\sum^{m=n-1}_{m=0}Z_{0 e y}(m)\left(H^{n-m+1/2}_{z}(i,j,k)-H^{n-m+1/2}_{z}(i,j-1,k)\right)
+\end{equation}
+\begin{eqnarray}
+&&Z_{0 e y}(m)=\frac{1}{\Delta y}\int^{(m+1)\Delta t}_{m\Delta t}\xi_{e y}(\tau)d \tau\nonumber\\
+&&=-\frac{\sigma_{p e y}}{\Delta y\epsilon_{0}\kappa^{2}_{e y}} \int^{(m+1)\Delta t}_{m\Delta t}e^{-\left(\frac{\sigma_{p e i}}{\epsilon_{0}\kappa_{e i}}+\frac{\alpha_{e y}}{\epsilon_{0}}\right)\tau}d \tau\nonumber\\
+&&=a_{e y}e^{-\left(\frac{\sigma_{p e i}}{\epsilon_{0}\kappa_{e i}}+\frac{\alpha_{e y}}{\epsilon_{0}}\right)\frac{m \Delta t}{\epsilon_{0}}}
+\end{eqnarray}
+and
+\begin{equation}
+a_{e y}=\frac{\sigma_{p e y}}
+{\Delta y \left(\sigma_{p e y}\kappa_{ey}+\alpha_{ey}\kappa^{2}_{e y}\right)}
+\left[
+e^{-
+\left(
+\frac{\sigma_{p e i}}{\epsilon_{0}\kappa_{e i}}
++\frac{\alpha_{e y}}{\epsilon_{0}}
+\right)
+\frac{\Delta t}{\epsilon_{0}}}-1\right]
+\end{equation}
+\section{Computing $\psi(n)=\sum^{m=n-1}_{m=0}A e^{m T}B(n-m) $}
+This equation can be written in recursive method
+\begin{equation}
+\psi(n)=A B(n)+e^{T}\psi(n-1)
+\end{equation}
+thus equation ($\ref{psi}$) can be written as follow
+\begin{equation}
+\psi^{n+1/2}_{e x y}(i,j,k)=b_{ey}\psi^{n-1/2}_{e x y}(i,j,k)+
+a_{e y}\left(H^{n+1/2}_{z}(i,j,k)-H^{n+1/2}_{z}(i,j-1,k)\right)
+\end{equation}
+where
+\begin{equation}
+a_{ey}=
+\frac{\sigma_{pey}}
+{
+\Delta y 
+\left(
+\sigma_{pey}\kappa_{ey}
++\alpha_{ey}\kappa^{2}_{ey}
+\right)}\left[b_{ey}-1\right]
+\end{equation}
+\begin{equation}
+b_{ey}=e^{-\left(\frac{\sigma_{pey}}{\kappa_{ey}}+\alpha_{ey}\right)\frac{\Delta t}{\epsilon_{0}}}
+\end{equation}
+\section{Final Updating Formulations}
+In CPML region
+\begin{eqnarray}
+&&E^{n+1}_x(i,j,k)=C_{exe}(i,j,k)E^n_x(i,j,k)\nonumber\\
+&&+(1/\kappa_{ey}(i,j,k))C_{exhz}(i,j,k)\left(H^{n+1/2}_{z}(i,j,k)-H^{n+1/2}_{z}(i,j-1,k)\right)\nonumber\\
+&&+(1/\kappa_{ez}(i,j,k))C_{exhy}(i,j,k)\left(H^{n+1/2}_{y}(i,j,k)-H^{n+1/2}_{y}(i,j,k-1)\right)\nonumber\\
+&&\Delta y C_{exhz}(i,j,k)\psi^{n+1/2}_{exy}(i,j,k)+\Delta y C_{exhy}(i,j,k)\psi^{n+1/2}_{exz}(i,j,k)
+\end{eqnarray}
+or written in simple format
+\begin{eqnarray}
+&&E^{n+1}_x(i,j,k)=C_{exe}(i,j,k)E^n_x(i,j,k)\nonumber\\
+&&+C_{exhz}(i,j,k)\left(H^{n+1/2}_{z}(i,j,k)-H^{n+1/2}_{z}(i,j-1,k)\right)\nonumber\\
+&&+C_{exhy}(i,j,k)\left(H^{n+1/2}_{y}(i,j,k)-H^{n+1/2}_{y}(i,j,k-1)\right)\nonumber\\
+&&C_{\psi_{exhz}}(i,j,k)\psi^{n+1/2}_{exy}(i,j,k)+C_{\psi_{exhy}}(i,j,k)\psi^{n+1/2}_{exz}(i,j,k)
+\end{eqnarray}
+\end{document}

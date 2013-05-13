@@ -1,4 +1,4 @@
 cpml
 ====
 
-Convolutional Perfectly Matched Layer in C,FDTD
+Convolutional Perfectly Matched Layer in C++,FDTD
