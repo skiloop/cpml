@@ -376,33 +376,33 @@ private:
      */
     void updatePsiForMFields(const data3d<type1>& Ex, const data3d<type1>& Ey, const data3d<type1>& Ez);
     
-    void updatePsi_eyz_n(const data3d<type1>& Hz);
-    void updatePsi_ezy_n(const data3d<type1>& Hy);
-    void updatePsi_exz_n(const data3d<type1>& Hz);
-    void updatePsi_ezx_n(const data3d<type1>& Hx);
-    void updatePsi_eyx_n(const data3d<type1>& Hx);
-    void updatePsi_exy_n(const data3d<type1>& Hy);
+    void updatePsi_eyz_zn(const data3d<type1>& Hz);
+    void updatePsi_ezy_yn(const data3d<type1>& Hy);
+    void updatePsi_exz_zn(const data3d<type1>& Hz);
+    void updatePsi_ezx_xn(const data3d<type1>& Hx);
+    void updatePsi_eyx_xn(const data3d<type1>& Hx);
+    void updatePsi_exy_yn(const data3d<type1>& Hy);
     
-    void updatePsi_hyz_n(const data3d<type1>& Ez);
-    void updatePsi_hzy_n(const data3d<type1>& Ey);
-    void updatePsi_hxz_n(const data3d<type1>& Ez);
-    void updatePsi_hzx_n(const data3d<type1>& Ex);
-    void updatePsi_hyx_n(const data3d<type1>& Ex);
-    void updatePsi_hxy_n(const data3d<type1>& Ey);
+    void updatePsi_hyz_zn(const data3d<type1>& Ez);
+    void updatePsi_hzy_yn(const data3d<type1>& Ey);
+    void updatePsi_hxz_zn(const data3d<type1>& Ez);
+    void updatePsi_hzx_xn(const data3d<type1>& Ex);
+    void updatePsi_hyx_xn(const data3d<type1>& Ex);
+    void updatePsi_hxy_yn(const data3d<type1>& Ey);
     
-        void updatePsi_eyz_p(const data3d<type1>& Hz);
-    void updatePsi_ezy_p(const data3d<type1>& Hy);
-    void updatePsi_exz_p(const data3d<type1>& Hz);
-    void updatePsi_ezx_p(const data3d<type1>& Hx);
-    void updatePsi_eyx_p(const data3d<type1>& Hx);
-    void updatePsi_exy_p(const data3d<type1>& Hy);
+        void updatePsi_eyz_zp(const data3d<type1>& Hz);
+    void updatePsi_ezy_yp(const data3d<type1>& Hy);
+    void updatePsi_exz_zp(const data3d<type1>& Hz);
+    void updatePsi_ezx_xp(const data3d<type1>& Hx);
+    void updatePsi_eyx_xp(const data3d<type1>& Hx);
+    void updatePsi_exy_yp(const data3d<type1>& Hy);
     
-    void updatePsi_hyz_p(const data3d<type1>& Ez);
-    void updatePsi_hzy_p(const data3d<type1>& Ey);
-    void updatePsi_hxz_p(const data3d<type1>& Ez);
-    void updatePsi_hzx_p(const data3d<type1>& Ex);
-    void updatePsi_hyx_p(const data3d<type1>& Ex);
-    void updatePsi_hxy_p(const data3d<type1>& Ey);
+    void updatePsi_hyz_zp(const data3d<type1>& Ez);
+    void updatePsi_hzy_yp(const data3d<type1>& Ey);
+    void updatePsi_hxz_zp(const data3d<type1>& Ez);
+    void updatePsi_hzx_xp(const data3d<type1>& Ex);
+    void updatePsi_hyx_xp(const data3d<type1>& Ex);
+    void updatePsi_hxy_yp(const data3d<type1>& Ey);
     
     void updateEFieldCPML_x(data3d<type1>&Ey,data3d<type1>&Ez);
     void updateEFieldCPML_y(data3d<type1>&Ex,data3d<type1>&Ez);

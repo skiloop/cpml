@@ -558,56 +558,56 @@ void cpml::updateCPML_M_Fields(data3d<type1>& Hx, data3d<type1>& Hy, data3d<type
 template<class type1>
 void cpml::updatePsiForEFields(const data3d<type1>& Hx, const data3d<type1>& Hy, const data3d<type1>& Hz) {
     if (is_cpml_xn) {
-        updatePsi_eyz_n(Hz);
-        updatePsi_ezy_n(Hy);
+        updatePsi_eyz_zn(Hz);
+        updatePsi_ezy_yn(Hy);
     }
     if (is_cpml_xp) {
-        updatePsi_eyz_p(Hz);
-        updatePsi_ezy_p(Hy);
+        updatePsi_eyz_zp(Hz);
+        updatePsi_ezy_yp(Hy);
     }
     if (is_cpml_yn) {
-        updatePsi_exz_n(Hz);
-        updatePsi_ezx_n(Hx);
+        updatePsi_exz_zn(Hz);
+        updatePsi_ezx_xn(Hx);
     }
     if (is_cpml_yp) {
-        updatePsi_exz_p(Hz);
-        updatePsi_ezx_p(Hx);
+        updatePsi_exz_zp(Hz);
+        updatePsi_ezx_xp(Hx);
     }
     if (is_cpml_zn) {
-        updatePsi_eyx_n(Hx);
-        updatePsi_exy_n(Hy);
+        updatePsi_eyx_xn(Hx);
+        updatePsi_exy_yn(Hy);
     }
     if (is_cpml_zp) {
-        updatePsi_eyx_p(Hx);
-        updatePsi_exy_p(Hy);
+        updatePsi_eyx_xp(Hx);
+        updatePsi_exy_yp(Hy);
     }
 }
 
 template<class type1>
 void cpml::updatePsiForMFields(const data3d<type1>& Ex, const data3d<type1>& Ey, const data3d<type1>& Ez) {
     if (is_cpml_xn) {
-        updatePsi_hyz_n(Ez);
-        updatePsi_hzy_n(Ey);
+        updatePsi_hyz_zn(Ez);
+        updatePsi_hzy_yn(Ey);
     }
     if (is_cpml_xp) {
-        updatePsi_hyz_p(Ez);
-        updatePsi_hzy_p(Ey);
+        updatePsi_hyz_zp(Ez);
+        updatePsi_hzy_yp(Ey);
     }
     if (is_cpml_yn) {
-        updatePsi_hxz_n(Ez);
-        updatePsi_hzx_n(Ex);
+        updatePsi_hxz_zn(Ez);
+        updatePsi_hzx_xn(Ex);
     }
     if (is_cpml_yp) {
-        updatePsi_hxz_p(Ez);
-        updatePsi_hzx_p(Ex);
+        updatePsi_hxz_zp(Ez);
+        updatePsi_hzx_xp(Ex);
     }
     if (is_cpml_zn) {
-        updatePsi_hyx_n(Ex);
-        updatePsi_hxy_n(Ey);
+        updatePsi_hyx_xn(Ex);
+        updatePsi_hxy_yn(Ey);
     }
     if (is_cpml_zp) {
-        updatePsi_hyx_p(Ex);
-        updatePsi_hxy_p(Ey);
+        updatePsi_hyx_xp(Ex);
+        updatePsi_hxy_yp(Ey);
     }
 }
 
@@ -833,7 +833,7 @@ void cpml::updateMFieldCPML_z(data3d<type1>& Hx, data3d<type1>& Hy) {
 }
 
 template<class type1>
-void cpml::updatePsi_eyz_p(const data3d<type1>& Hx) {
+void cpml::updatePsi_eyz_zp(const data3d<type1>& Hx) {
     for (unsigned k = 0, ikz = Hx.nz - n_cpml_zp; k < n_cpml_zp; k++, ihz++) {
         for (unsigned i = 0; i < Psi_eyz_zp.nx; i++) {
             for (unsigned j = 0; j < Psi_eyz_zp.ny; j++) {
@@ -844,7 +844,7 @@ void cpml::updatePsi_eyz_p(const data3d<type1>& Hx) {
 }
 
 template<class type1>
-void cpml::updatePsi_ezy_p(const data3d<type1>& Hx) {
+void cpml::updatePsi_ezy_yp(const data3d<type1>& Hx) {
     for (unsigned j = 0, jhy = Hx.ny - n_cpml_yp; j < n_cpml_yp; j++, jhy++) {
         for (unsigned i = 0; i < Psi_ezy_yp.nx; i++) {
             for (unsigned k = 0; k < Psi_ezy_yp.nz; k++) {
@@ -855,7 +855,7 @@ void cpml::updatePsi_ezy_p(const data3d<type1>& Hx) {
 }
 
 template<class type1>
-void cpml::updatePsi_exz_p(const data3d<type1>& Hy) {
+void cpml::updatePsi_exz_zp(const data3d<type1>& Hy) {
     for (unsigned k = 0, iez = Hy.nz - n_cpml_zp - 2; k < n_cpml_zp; k++, iez++) {
         for (unsigned i = 0; i < Psi_exz_zp.nx; i++) {
             for (unsigned j = 0; j < Psi_exz_zp.ny; j++) {
@@ -866,7 +866,7 @@ void cpml::updatePsi_exz_p(const data3d<type1>& Hy) {
 }
 
 template<class type1>
-void cpml::updatePsi_ezx_p(const data3d<type1>& Hy) {
+void cpml::updatePsi_ezx_xp(const data3d<type1>& Hy) {
     for (unsigned i = 0, iex = Hz.nx - n_cpml_xp - 1; i < n_cpml_xp; i++, iex++) {
         for (unsigned j = 0; j < Psi_ezx_xp.ny; j++) {
             for (unsigned k = 0; k < Psi_ezx_xp.nz; k++) {
@@ -877,7 +877,7 @@ void cpml::updatePsi_ezx_p(const data3d<type1>& Hy) {
 }
 
 template<class type1>
-void cpml::updatePsi_eyx_p(const data3d<type1>& Hz) {
+void cpml::updatePsi_eyx_xp(const data3d<type1>& Hz) {
     for (unsigned i = 0; i < n_cpml_xp; i++) {
         for (unsigned j = 0; j < Psi_eyx_xp.ny; j++) {
             for (unsigned k = 0; k < Psi_eyx_xp.nz; k++) {
@@ -888,7 +888,7 @@ void cpml::updatePsi_eyx_p(const data3d<type1>& Hz) {
 }
 
 template<class type1>
-void cpml::updatePsi_exy_p(const data3d<type1>& Hz) {
+void cpml::updatePsi_exy_yp(const data3d<type1>& Hz) {
     for (unsigned j = 0, imy = Hz.ny - n_cpml_yp; j < n_cpml_yp; j++, imy++) {
         for (unsigned i = 0; i < Psi_exy_yp.nx; i++) {
             for (unsigned k = 0; k < Psi_exy_yp.nz; k++) {
@@ -899,7 +899,7 @@ void cpml::updatePsi_exy_p(const data3d<type1>& Hz) {
 }
 
 template<class type1>
-void cpml::updatePsi_hyz_p(const data3d<type1>& Ex) {
+void cpml::updatePsi_hyz_zp(const data3d<type1>& Ex) {
     for (unsigned k = 0, ikz = Ex.nz - n_cpml_zp; k < n_cpml_zp; k++, ihz++) {
         for (unsigned i = 0; i < Psi_hyz_zp.nx; i++) {
             for (unsigned j = 0; j < Psi_hyz_zp.ny; j++) {
@@ -910,7 +910,7 @@ void cpml::updatePsi_hyz_p(const data3d<type1>& Ex) {
 }
 
 template<class type1>
-void cpml::updatePsi_hzy_p(const data3d<type1>& Ex) {
+void cpml::updatePsi_hzy_yp(const data3d<type1>& Ex) {
     for (unsigned j = 0, jhy = Ex.ny - n_cpml_yp - 1; j < n_cpml_yp; j++, jhy++) {
         for (unsigned i = 0; i < Psi_hzy_yp.nx; i++) {
             for (unsigned k = 0; k < Psi_hzy_yp.nz; k++) {
@@ -921,7 +921,7 @@ void cpml::updatePsi_hzy_p(const data3d<type1>& Ex) {
 }
 
 template<class type1>
-void cpml::updatePsi_hxz_p(const data3d<type1>& Ey) {
+void cpml::updatePsi_hxz_zp(const data3d<type1>& Ey) {
     for (unsigned k = 0, ihz = Ey.nz - n_cpml_zp - 1; k < n_cpml_zp; k++, ihz++) {
         for (unsigned j = 0; j < Psi_hxz_zp.ny; j++) {
             for (unsigned i = 0; i < Psi_hxz_zp.nx; i++) {
@@ -932,7 +932,7 @@ void cpml::updatePsi_hxz_p(const data3d<type1>& Ey) {
 }
 
 template<class type1>
-void cpml::updatePsi_hzx_p(const data3d<type1>& Ey) {
+void cpml::updatePsi_hzx_xp(const data3d<type1>& Ey) {
     for (unsigned i = 0, ihx = Ey.nx - n_cpml_xp - 1; i < n_cpml_xp; i++, ihx++) {
         for (unsigned j = 0; j < Psi_hzx_xp.ny; j++) {
             for (unsigned k = 0; k < Psi_hzx_xp.nz; k++) {
@@ -943,7 +943,7 @@ void cpml::updatePsi_hzx_p(const data3d<type1>& Ey) {
 }
 
 template<class type1>
-void cpml::updatePsi_hyx_p(const data3d<type1>& Ez) {
+void cpml::updatePsi_hyx_xp(const data3d<type1>& Ez) {
     for (unsigned i = 0, imx = Ez.nx - n_cpml_zp - 1; i < n_cpml_zp; i++, imx++) {
         for (unsigned j = 0; j < Psi_hyx_xp.ny; j++) {
             for (unsigned k = 0; k < Psi_hyx_xp.nz; k++) {
@@ -954,7 +954,7 @@ void cpml::updatePsi_hyx_p(const data3d<type1>& Ez) {
 }
 
 template<class type1>
-void cpml::updatePsi_hxy_p(const data3d<type1>& Ez) {
+void cpml::updatePsi_hxy_yp(const data3d<type1>& Ez) {
     for (unsigned j = 0, imy = Ez.ny - n_cpml_yp - 1; j < n_cpml_yp; j++, imy++) {
         for (unsigned i = 0; i < Psi_hxy_yp.nx; i++) {
             for (unsigned k = 0; k < Psi_hxy_yp.nz; k++) {
@@ -965,7 +965,7 @@ void cpml::updatePsi_hxy_p(const data3d<type1>& Ez) {
 }
 
 template<class type1>
-void cpml::updatePsi_eyz_n(const data3d<type1>& Hx) {
+void cpml::updatePsi_eyz_zn(const data3d<type1>& Hx) {
     for (unsigned k = 0; k < n_cpml_zn; k++) {
         for (unsigned i = 0; i < Psi_eyz_zn.nx; i++) {
             for (unsigned j = 0; Psi_eyz_zn.ny; j++) {
@@ -976,7 +976,7 @@ void cpml::updatePsi_eyz_n(const data3d<type1>& Hx) {
 }
 
 template<class type1>
-void cpml::updatePsi_ezy_n(const data3d<type1>& Hx) {
+void cpml::updatePsi_ezy_yn(const data3d<type1>& Hx) {
     for (unsigned j = 0; j < n_cpml_yn; j++) {
         for (unsigned i = 0; i < Psi_ezy_yn.nx; i++) {
             for (unsigned k = 0; k < Psi_ezy_yn.nz; k++) {
@@ -987,7 +987,7 @@ void cpml::updatePsi_ezy_n(const data3d<type1>& Hx) {
 }
 
 template<class type1>
-void cpml::updatePsi_exz_n(const data3d<type1>& Hy) {
+void cpml::updatePsi_exz_zn(const data3d<type1>& Hy) {
     for (unsigned k = 0; k < n_cpml_zn; k++) {
         for (unsigned i = 0; i < Psi_exz_zn.nx; i++) {
             for (unsigned j = 0; j < Psi_exz_zn.ny; j++) {
@@ -998,7 +998,7 @@ void cpml::updatePsi_exz_n(const data3d<type1>& Hy) {
 }
 
 template<class type1>
-void cpml::updatePsi_ezx_n(const data3d<type1>& Hy) {
+void cpml::updatePsi_ezx_xn(const data3d<type1>& Hy) {
     for (unsigned i = 0; i < n_cpml_xn; i++) {
         for (unsigned j = 0; j < Psi_ezx_xn.ny; j++) {
             for (unsigned k = 0; k < Psi_ezx_xn.nz; k++) {
@@ -1009,7 +1009,7 @@ void cpml::updatePsi_ezx_n(const data3d<type1>& Hy) {
 }
 
 template<class type1>
-void cpml::updatePsi_eyx_n(const data3d<type1>& Hz) {
+void cpml::updatePsi_eyx_xn(const data3d<type1>& Hz) {
     for (unsigned i = 0; i < n_cpml_xn; i++) {
         for (unsigned j = 0; j < Psi_eyx_xn.ny; j++) {
             for (unsigned k = 0; k < Psi_eyx_xn.nz; k++) {
@@ -1020,7 +1020,7 @@ void cpml::updatePsi_eyx_n(const data3d<type1>& Hz) {
 }
 
 template<class type1>
-void cpml::updatePsi_exy_n(const data3d<type1>& Hz) {
+void cpml::updatePsi_exy_yn(const data3d<type1>& Hz) {
     for (unsigned j = 0; j < n_cpml_yn; j++) {
         for (unsigned k = 0; k < Psi_exy_yn.nz; k++) {
             for (unsigned i = 0; i < Psi_exy_yn.ny; i++) {
@@ -1031,7 +1031,7 @@ void cpml::updatePsi_exy_n(const data3d<type1>& Hz) {
 }
 
 template<class type1>
-void cpml::updatePsi_hyz_n(const data3d<type1>& Ex) {
+void cpml::updatePsi_hyz_zn(const data3d<type1>& Ex) {
     for (unsigned k = 0; k < n_cpml_zn; k++) {
         for (unsigned j = 0; j < Psi_hyz_zn.ny; j++) {
             for (unsigned i = 0; i < Psi_hyz_zn.nx; i++) {
@@ -1042,7 +1042,7 @@ void cpml::updatePsi_hyz_n(const data3d<type1>& Ex) {
 }
 
 template<class type1>
-void cpml::updatePsi_hzy_n(const data3d<type1>& Ex) {
+void cpml::updatePsi_hzy_yn(const data3d<type1>& Ex) {
     for (unsigned j = 0; j < n_cpml_yn; j++) {
         for (unsigned i = 0; i < Psi_hzy_yn.nx; i++) {
             for (unsigned k = 0; k < Psi_hzy_yn.nz; k++) {
@@ -1053,7 +1053,7 @@ void cpml::updatePsi_hzy_n(const data3d<type1>& Ex) {
 }
 
 template<class type1>
-void cpml::updatePsi_hxz_n(const data3d<type1>& Ey) {
+void cpml::updatePsi_hxz_zn(const data3d<type1>& Ey) {
     for (unsigned k = 0; k < n_cpml_zn; k++) {
         for (unsigned i = 0; i < Psi_hxz_zn.nx; i++) {
             for (unsigned j = 0; j < Psi_hxz_zn.ny; j++) {
@@ -1064,7 +1064,7 @@ void cpml::updatePsi_hxz_n(const data3d<type1>& Ey) {
 }
 
 template<class type1>
-void cpml::updatePsi_hzx_n(const data3d<type1>& Ex) {
+void cpml::updatePsi_hzx_xn(const data3d<type1>& Ex) {
     for (unsigned i = 0; i < n_cpml_xn; i++) {
         for (unsigned j = 0; j < Psi_hzx_xn.ny; j++) {
             for (unsigned k = 0; k < Psi_hzx_xn.nz; k++) {
@@ -1075,7 +1075,7 @@ void cpml::updatePsi_hzx_n(const data3d<type1>& Ex) {
 }
 
 template<class type1>
-void cpml::updatePsi_hyx_n(const data3d<type1>& Ex) {
+void cpml::updatePsi_hyx_xn(const data3d<type1>& Ex) {
     for (unsigned i = 0; i < n_cpml_xn; i++) {
         for (unsigned j = 0; j < Psi_hyz_zn.ny; j++) {
             for (unsigned k = 0; k < Psi_hyz_zn.nz; k++) {
@@ -1086,7 +1086,7 @@ void cpml::updatePsi_hyx_n(const data3d<type1>& Ex) {
 }
 
 template<class type1>
-void cpml::updatePsi_hxy_n(const data3d<type1>& Ez) {
+void cpml::updatePsi_hxy_yn(const data3d<type1>& Ez) {
     for (unsigned j = 0; j < n_cpml_yn; j++) {
         for (unsigned i = 0; i < Psi_hxy_yn.nx; i++) {
             for (unsigned k = 0; k < Psi_hxy_yn.nz; k++) {
