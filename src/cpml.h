@@ -16,8 +16,21 @@ const double e = 1.602e-19; // electricity charge
 const double mu_0 = 4.0 * M_PI * 1.0E-7;
 const double eps_0 = 1.0 / (C * C * mu_0);
 const double M_PI_TWO = M_PI * 2;
+const double Mu0DivEps0 = mu_0 / eps_0;
 
-template<class type1, class type2>
+/***************************************************************
+ * FDTD region 
+ * Field    |    x     |    y    |   z
+ * ----------------------------------------------
+ * Ez       |   I      |    J    |   K
+ * Ex       |   I-1    |    J    |   K-1
+ * Ey       |   I      |   J-1   |   K-1
+ * Hx       |   I      |   J-1   |   K
+ * Hy       |   I-1    |    J    |   K
+ * Hz       |   I-1    |   J-1   |   K-1
+ * ----------------------------------------------
+ */
+template<class type1>
 class cpml {
 public:
     /**
@@ -152,6 +165,35 @@ private:
     data3d<type1> CPsi_hxz_zp;
     data3d<type1> CPsi_hyz_zp;
 
+    // a and b for cpml to update Psi
+    // x direction
+    data1d<type1> cpml_a_ex_xn;
+    data1d<type1> cpml_b_ex_xn;
+    data1d<type1> cpml_a_mx_xn;
+    data1d<type1> cpml_b_mx_xn;
+    data1d<type1> cpml_a_ex_xp;
+    data1d<type1> cpml_b_ex_xp;
+    data1d<type1> cpml_a_mx_xp;
+    data1d<type1> cpml_b_mx_xp;
+    // y direction
+    data1d<type1> cpml_a_ey_yn;
+    data1d<type1> cpml_b_ey_yn;
+    data1d<type1> cpml_a_my_yn;
+    data1d<type1> cpml_b_my_yn;
+    data1d<type1> cpml_a_ey_yp;
+    data1d<type1> cpml_b_ey_yp;
+    data1d<type1> cpml_a_my_yp;
+    data1d<type1> cpml_b_my_yp;
+    // z direction
+    data1d<type1> cpml_a_ez_zn;
+    data1d<type1> cpml_b_ez_zn;
+    data1d<type1> cpml_a_mz_zn;
+    data1d<type1> cpml_b_mz_zn;
+    data1d<type1> cpml_a_ez_zp;
+    data1d<type1> cpml_b_ez_zp;
+    data1d<type1> cpml_a_mz_zp;
+    data1d<type1> cpml_b_mz_zp;
+
     //=================================================
     // PUBLIC interface 
     //=================================================
@@ -163,7 +205,7 @@ public:
      * @param Ez
      * @param Hx
      * @param Hy
-     * @param Hz
+     * @param Hz1
      */
     void updateCPML_E_Fields(data3d<type1> &Ex, data3d<type1>& Ey, data3d<type1> &Ez,
             const data3d<type1> & Hx, const data3d<type1> & Hy, const data3d<type1> & Hz);
@@ -183,16 +225,192 @@ public:
     // private functions
     //=======================================================
 private:
+    /**
+     * 
+     * @param pmlWidth
+     */
     void setCPMLRegion(short pmlWidth);
+    /**
+     * 
+     * @param width_xn
+     * @param width_xp
+     * @param width_yn
+     * @param width_yp
+     * @param width_zn
+     * @param width_zp
+     */
     void setCPMLRegion(short width_xn, short width_xp, short width_yn, short width_yp, short width_zn, short width_zp);
+    /**
+     * 
+     * @param imax
+     * @param jmax
+     * @param kmax
+     */
     void createCPMLArrays(unsigned imax, unsigned jmax, unsigned kmax);
-    void initCoefficientArrays(short pmlOrder, type1 sigmaRatio, type1 kappaMax, type1 alphaMax, type1 dx, type1 dy, type1 dz);
-    void initCoefficientArraysXN(short pmlOrder, type1 sigmaRatio, type1 kappaMax, type1 alphaMax, type1 dx);
-    void initCoefficientArraysXP(short pmlOrder, type1 sigmaRatio, type1 kappaMax, type1 alphaMax, type1 dx);
-    void initCoefficientArraysYN(short pmlOrder, type1 sigmaRatio, type1 kappaMax, type1 alphaMax, type1 dy);
-    void initCoefficientArraysYP(short pmlOrder, type1 sigmaRatio, type1 kappaMax, type1 alphaMax, type1 dy);
-    void initCoefficientArraysZN(short pmlOrder, type1 sigmaRatio, type1 kappaMax, type1 alphaMax, type1 dz);
-    void initCoefficientArraysZP(short pmlOrder, type1 sigmaRatio, type1 kappaMax, type1 alphaMax, type1 dz);
+    /**
+     * 
+     * @param pmlOrder
+     * @param sigmaRatio
+     * @param kappaMax
+     * @param alphaMax
+     * @param dt
+     * @param dx
+     * @param dy
+     * @param dz
+     * @param Ceyhz
+     * @param Cezhy
+     * @param Chyez
+     * @param Chzey
+     * @param Cexhz
+     * @param Cezhx
+     * @param Chxez
+     * @param Chzex
+     * @param Ceyhx
+     * @param Cexhy
+     * @param Chyex
+     * @param Chxey
+     */
+    void initCoefficientArrays(short pmlOrder, type1 sigmaRatio, type1 kappaMax, type1 alphaMax, type1 dt, type1 dx, type1 dy, type1 dz,
+            data3d<type1>&Ceyhz, data3d<type1>&Cezhy, data3d<type1>&Chyez, data3d<type1>&Chzey,
+            data3d<type1>&Cexhz, data3d<type1>&Cezhx, data3d<type1>&Chxez, data3d<type1>&Chzex,
+            data3d<type1>&Ceyhx, data3d<type1>&Cexhy, data3d<type1>&Chyex, data3d<type1>&Chxey);
+    /**
+     * 
+     * @param pmlOrder
+     * @param sigmaRatio
+     * @param kappaMax
+     * @param alphaMax
+     * @param dt
+     * @param dx
+     * @param Ceyhz
+     * @param Cezhy
+     * @param Chyez
+     * @param Chzey
+     */
+    void initCoefficientArraysXN(short pmlOrder, type1 sigmaRatio, type1 kappaMax, type1 alphaMax, type1 dt, type1 dx, data3d<type1>&Ceyhz, data3d<type1>&Cezhy, data3d<type1>&Chyez, data3d<type1>&Chzey);
+    
+    /**
+     * 
+     * @param pmlOrder
+     * @param sigmaRatio
+     * @param kappaMax
+     * @param alphaMax
+     * @param dt
+     * @param dx
+     * @param Ceyhz
+     * @param Cezhy
+     * @param Chyez
+     * @param Chzey
+     */
+    void initCoefficientArraysXP(short pmlOrder, type1 sigmaRatio, type1 kappaMax, type1 alphaMax, type1 dt, type1 dx, data3d<type1>&Ceyhz, data3d<type1>&Cezhy, data3d<type1>&Chyez, data3d<type1>&Chzey);
+    
+    /**
+     * 
+     * @param pmlOrder
+     * @param sigmaRatio
+     * @param kappaMax
+     * @param alphaMax
+     * @param dt
+     * @param dy
+     * @param Cexhz
+     * @param Cezhx
+     * @param Chxez
+     * @param Chzex
+     */
+    void initCoefficientArraysYN(short pmlOrder, type1 sigmaRatio, type1 kappaMax, type1 alphaMax, type1 dt, type1 dy, data3d<type1>&Cexhz, data3d<type1>&Cezhx, data3d<type1>&Chxez, data3d<type1>&Chzex);
+    /**
+     * 
+     * @param pmlOrder
+     * @param sigmaRatio
+     * @param kappaMax
+     * @param alphaMax
+     * @param dt
+     * @param dy
+     * @param Cexhz
+     * @param Cezhx
+     * @param Chxez
+     * @param Chzex
+     */
+    void initCoefficientArraysYP(short pmlOrder, type1 sigmaRatio, type1 kappaMax, type1 alphaMax, type1 dt, type1 dy, data3d<type1>&Cexhz, data3d<type1>&Cezhx, data3d<type1>&Chxez, data3d<type1>&Chzex);
+    /**
+     * 
+     * @param pmlOrder
+     * @param sigmaRatio
+     * @param kappaMax
+     * @param alphaMax
+     * @param dt
+     * @param dz
+     * @param Ceyhx
+     * @param Cexhy
+     * @param Chyex
+     * @param Chxey
+     */
+    void initCoefficientArraysZN(short pmlOrder, type1 sigmaRatio, type1 kappaMax, type1 alphaMax, type1 dt, type1 dz, data3d<type1>&Ceyhx, data3d<type1>&Cexhy, data3d<type1>&Chyex, data3d<type1>&Chxey);
+    /**
+     * 
+     * @param pmlOrder
+     * @param sigmaRatio
+     * @param kappaMax
+     * @param alphaMax
+     * @param dt
+     * @param dz
+     * @param Ceyhx
+     * @param Cexhy
+     * @param Chyex
+     * @param Chxey
+     */
+    void initCoefficientArraysZP(short pmlOrder, type1 sigmaRatio, type1 kappaMax, type1 alphaMax, type1 dt, type1 dz, data3d<type1>&Ceyhx, data3d<type1>&Cexhy, data3d<type1>&Chyex, data3d<type1>&Chxey);
+    
+    /**
+     * 
+     * @param Hx
+     * @param Hy
+     * @param Hz
+     */
+    void updatePsiForEFields(const data3d<type1>& Hx, const data3d<type1>& Hy, const data3d<type1>& Hz);
+    /**
+     * 
+     * @param Ex
+     * @param Ey
+     * @param Ez
+     */
+    void updatePsiForMFields(const data3d<type1>& Ex, const data3d<type1>& Ey, const data3d<type1>& Ez);
+    
+    void updatePsi_eyz_n(const data3d<type1>& Hz);
+    void updatePsi_ezy_n(const data3d<type1>& Hy);
+    void updatePsi_exz_n(const data3d<type1>& Hz);
+    void updatePsi_ezx_n(const data3d<type1>& Hx);
+    void updatePsi_eyx_n(const data3d<type1>& Hx);
+    void updatePsi_exy_n(const data3d<type1>& Hy);
+    
+    void updatePsi_hyz_n(const data3d<type1>& Ez);
+    void updatePsi_hzy_n(const data3d<type1>& Ey);
+    void updatePsi_hxz_n(const data3d<type1>& Ez);
+    void updatePsi_hzx_n(const data3d<type1>& Ex);
+    void updatePsi_hyx_n(const data3d<type1>& Ex);
+    void updatePsi_hxy_n(const data3d<type1>& Ey);
+    
+        void updatePsi_eyz_p(const data3d<type1>& Hz);
+    void updatePsi_ezy_p(const data3d<type1>& Hy);
+    void updatePsi_exz_p(const data3d<type1>& Hz);
+    void updatePsi_ezx_p(const data3d<type1>& Hx);
+    void updatePsi_eyx_p(const data3d<type1>& Hx);
+    void updatePsi_exy_p(const data3d<type1>& Hy);
+    
+    void updatePsi_hyz_p(const data3d<type1>& Ez);
+    void updatePsi_hzy_p(const data3d<type1>& Ey);
+    void updatePsi_hxz_p(const data3d<type1>& Ez);
+    void updatePsi_hzx_p(const data3d<type1>& Ex);
+    void updatePsi_hyx_p(const data3d<type1>& Ex);
+    void updatePsi_hxy_p(const data3d<type1>& Ey);
+    
+    void updateEFieldCPML_x(data3d<type1>&Ey,data3d<type1>&Ez);
+    void updateEFieldCPML_y(data3d<type1>&Ex,data3d<type1>&Ez);
+    void updateEFieldCPML_z(data3d<type1>&Ex,data3d<type1>&Ey);
+    
+    void updateMFieldCPML_x(data3d<type1>&Hy,data3d<type1>&Hz);
+    void updateMFieldCPML_y(data3d<type1>&Hx,data3d<type1>&Hz);
+    void updateMFieldCPML_z(data3d<type1>&Hx,data3d<type1>&Hy);
 };
 #include "cpml.cpp"
 #endif	/* CPML_H */
