@@ -29,7 +29,7 @@ TAGET=formulations.pdf
 ###########################
 ## objects
 ###########################
-OBJECTS=
+OBJECTS=cpml.o
 
 
 ###########################
@@ -37,11 +37,12 @@ OBJECTS=
 ###########################
 .PHONY:all clean
 
-all: formulations.pdf
+all: formulations.pdf cpml.o
 
 
 
-
+$(OBJECTS):%.o:%.h
+	$(CXX) -c $< $(CXXFLAGS)
 
 
 ## formulations

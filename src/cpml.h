@@ -22,12 +22,12 @@ const double Mu0DivEps0 = mu_0 / eps_0;
  * FDTD region 
  * Field    |    x     |    y    |   z
  * ----------------------------------------------
- * Ez       |   I      |    J    |   K
- * Ex       |   I-1    |    J    |   K-1
- * Ey       |   I      |   J-1   |   K-1
- * Hx       |   I      |   J-1   |   K
- * Hy       |   I-1    |    J    |   K
- * Hz       |   I-1    |   J-1   |   K-1
+ * Ez       |   I      |    J    |   K-1
+ * Ex       |   I-1    |    J    |   K
+ * Ey       |   I      |   J-1   |   K
+ * Hx       |   I      |   J-1   |   K-1
+ * Hy       |   I-1    |    J    |   K-1
+ * Hz       |   I-1    |   J-1   |   K
  * ----------------------------------------------
  */
 template<class type1>
@@ -205,7 +205,7 @@ public:
      * @param Ez
      * @param Hx
      * @param Hy
-     * @param Hz1
+     * @param Hz
      */
     void updateCPML_E_Fields(data3d<type1> &Ex, data3d<type1>& Ey, data3d<type1> &Ez,
             const data3d<type1> & Hx, const data3d<type1> & Hy, const data3d<type1> & Hz);
@@ -288,7 +288,7 @@ private:
      * @param Chzey
      */
     void initCoefficientArraysXN(short pmlOrder, type1 sigmaRatio, type1 kappaMax, type1 alphaMax, type1 dt, type1 dx, data3d<type1>&Ceyhz, data3d<type1>&Cezhy, data3d<type1>&Chyez, data3d<type1>&Chzey);
-    
+
     /**
      * 
      * @param pmlOrder
@@ -303,7 +303,7 @@ private:
      * @param Chzey
      */
     void initCoefficientArraysXP(short pmlOrder, type1 sigmaRatio, type1 kappaMax, type1 alphaMax, type1 dt, type1 dx, data3d<type1>&Ceyhz, data3d<type1>&Cezhy, data3d<type1>&Chyez, data3d<type1>&Chzey);
-    
+
     /**
      * 
      * @param pmlOrder
@@ -360,7 +360,7 @@ private:
      * @param Chxey
      */
     void initCoefficientArraysZP(short pmlOrder, type1 sigmaRatio, type1 kappaMax, type1 alphaMax, type1 dt, type1 dz, data3d<type1>&Ceyhx, data3d<type1>&Cexhy, data3d<type1>&Chyex, data3d<type1>&Chxey);
-    
+
     /**
      * 
      * @param Hx
@@ -375,42 +375,42 @@ private:
      * @param Ez
      */
     void updatePsiForMFields(const data3d<type1>& Ex, const data3d<type1>& Ey, const data3d<type1>& Ez);
-    
-    void updatePsi_eyz_zn(const data3d<type1>& Hz);
-    void updatePsi_ezy_yn(const data3d<type1>& Hy);
-    void updatePsi_exz_zn(const data3d<type1>& Hz);
-    void updatePsi_ezx_xn(const data3d<type1>& Hx);
-    void updatePsi_eyx_xn(const data3d<type1>& Hx);
-    void updatePsi_exy_yn(const data3d<type1>& Hy);
-    
-    void updatePsi_hyz_zn(const data3d<type1>& Ez);
-    void updatePsi_hzy_yn(const data3d<type1>& Ey);
-    void updatePsi_hxz_zn(const data3d<type1>& Ez);
-    void updatePsi_hzx_xn(const data3d<type1>& Ex);
-    void updatePsi_hyx_xn(const data3d<type1>& Ex);
-    void updatePsi_hxy_yn(const data3d<type1>& Ey);
-    
-        void updatePsi_eyz_zp(const data3d<type1>& Hz);
-    void updatePsi_ezy_yp(const data3d<type1>& Hy);
-    void updatePsi_exz_zp(const data3d<type1>& Hz);
-    void updatePsi_ezx_xp(const data3d<type1>& Hx);
-    void updatePsi_eyx_xp(const data3d<type1>& Hx);
-    void updatePsi_exy_yp(const data3d<type1>& Hy);
-    
-    void updatePsi_hyz_zp(const data3d<type1>& Ez);
-    void updatePsi_hzy_yp(const data3d<type1>& Ey);
-    void updatePsi_hxz_zp(const data3d<type1>& Ez);
-    void updatePsi_hzx_xp(const data3d<type1>& Ex);
-    void updatePsi_hyx_xp(const data3d<type1>& Ex);
-    void updatePsi_hxy_yp(const data3d<type1>& Ey);
-    
-    void updateEFieldCPML_x(data3d<type1>&Ey,data3d<type1>&Ez);
-    void updateEFieldCPML_y(data3d<type1>&Ex,data3d<type1>&Ez);
-    void updateEFieldCPML_z(data3d<type1>&Ex,data3d<type1>&Ey);
-    
-    void updateMFieldCPML_x(data3d<type1>&Hy,data3d<type1>&Hz);
-    void updateMFieldCPML_y(data3d<type1>&Hx,data3d<type1>&Hz);
-    void updateMFieldCPML_z(data3d<type1>&Hx,data3d<type1>&Hy);
+
+    void updatePsi_eyz_zn(const data3d<type1>& Hx);
+    void updatePsi_ezy_yn(const data3d<type1>& Hx);
+    void updatePsi_exz_zn(const data3d<type1>& Hy);
+    void updatePsi_ezx_xn(const data3d<type1>& Hy);
+    void updatePsi_eyx_xn(const data3d<type1>& Hz);
+    void updatePsi_exy_yn(const data3d<type1>& Hz);
+
+    void updatePsi_hyz_zn(const data3d<type1>& Ex);
+    void updatePsi_hzy_yn(const data3d<type1>& Ex);
+    void updatePsi_hxz_zn(const data3d<type1>& Ey);
+    void updatePsi_hzx_xn(const data3d<type1>& Ey);
+    void updatePsi_hyx_xn(const data3d<type1>& Ez);
+    void updatePsi_hxy_yn(const data3d<type1>& Ez);
+
+    void updatePsi_eyz_zp(const data3d<type1>& Hx);
+    void updatePsi_ezy_yp(const data3d<type1>& Hx);
+    void updatePsi_exz_zp(const data3d<type1>& Hy);
+    void updatePsi_ezx_xp(const data3d<type1>& Hy);
+    void updatePsi_eyx_xp(const data3d<type1>& Hz);
+    void updatePsi_exy_yp(const data3d<type1>& Hz);
+
+    void updatePsi_hyz_zp(const data3d<type1>& Ex);
+    void updatePsi_hzy_yp(const data3d<type1>& Ex);
+    void updatePsi_hxz_zp(const data3d<type1>& Ey);
+    void updatePsi_hzx_xp(const data3d<type1>& Ey);
+    void updatePsi_hyx_xp(const data3d<type1>& Ez);
+    void updatePsi_hxy_yp(const data3d<type1>& Ez);
+
+    void updateEFieldCPML_x(data3d<type1>&Ey, data3d<type1>&Ez);
+    void updateEFieldCPML_y(data3d<type1>&Ex, data3d<type1>&Ez);
+    void updateEFieldCPML_z(data3d<type1>&Ex, data3d<type1>&Ey);
+
+    void updateMFieldCPML_x(data3d<type1>&Hy, data3d<type1>&Hz);
+    void updateMFieldCPML_y(data3d<type1>&Hx, data3d<type1>&Hz);
+    void updateMFieldCPML_z(data3d<type1>&Hx, data3d<type1>&Hy);
 };
 #include "cpml.cpp"
 #endif	/* CPML_H */
