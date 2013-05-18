@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../src/cpml.h"
+#include "cpml.h"
 
 #ifndef WITH_DENSITY
 //#define WITH_DENSITY
@@ -27,10 +27,10 @@ public:
     static const int SOURCE_SINE = SINE_WAVE_TYPE;
     static const int SOURCE_DERIVE_GAUSSIAN = DERIVE_GAUSSIAN_TYPE;
     static const int SOURCE_ZERO = ZERO_TYPE;
-    
+
     //Function prototype definitions
     void initialize(); //Memory initialization
-    void intSourceSinePulse(MyDataF t_0,MyDataF omega_,MyDataF tUp,MyDataF tDown,MyDataF amptidute);
+    void intSourceSinePulse(MyDataF t_0, MyDataF omega_, MyDataF tUp, MyDataF tDown, MyDataF amptidute);
     void setUp(); //Coefficients, parameters etc will get computed
     void compute(); //E & H Field update equation
     void StartUp();
@@ -74,9 +74,9 @@ private:
     /////////////////////////////////////////////////////////
     // SOURCE PARAMETRS
     ////////////////////////////////////////////////////////
-    MyDataF t_up;       // up bound of Pulse for Sine Pulse
-    MyDataF t_down;     // down bound of Pulse for Sine Pulse
-    
+    MyDataF t_up; // up bound of Pulse for Sine Pulse
+    MyDataF t_down; // down bound of Pulse for Sine Pulse
+
     //Max number of materials allowed
     unsigned numMaterials;
 #ifdef WITH_DENSITY
@@ -125,6 +125,12 @@ private:
     MyDataF DA;
     MyDataF DB;
 
+    data3d<MyDataF> Cexe, Ceye, Ceze;
+    data3d<MyDataF> Chxh, Chyh, Chzh;
+    data3d<MyDataF> Cexhy, Ceyhz, Cezhx, Cexhz, Ceyhx, Cezhy;
+    data3d<MyDataF> Chxey, Chyez, Chzex, Chxez, Chyex, Chzey;
+    void initCoeficients();
+
 #ifdef WITH_DENSITY
 
     int niutype;
@@ -133,7 +139,7 @@ private:
     //time step of plasma
     MyDataF dtf;
     int neSkipStep;
-    
+
     // tempary that offen used
     MyDataF half_dt;
     MyDataF half_e;
@@ -154,11 +160,8 @@ private:
 
     // update coefficients
     //    MyDataF Chxey,Chxez,Chyez,Chyex,Chzex,Chzey;
-    data3d<MyDataF> Cexe, Ceye, Ceze, Cezvz, Ceyvy, Cexvx;
-    data3d<MyDataF> Chxh,Chyh,Chzh;
-    data3d<MyDataF> Cexhy, Ceyhz, Cezhx,Cexhz, Ceyhx, Cezhy;    
-    data3d<MyDataF> Chxey, Chyez, Chzex,Chxez, Chyex, Chzey;
-    data3d<MyDataF> Cvxex_guassian,Cvyey_guassian,Cvzez_guassian;
+    data3d<MyDataF> Cezvz, Ceyvy, Cexvx;    
+    data3d<MyDataF> Cvxex_guassian, Cvyey_guassian, Cvzez_guassian;
     MyDataF Cvxex, Cvyey, Cvzez;
 
     //Plasma
@@ -199,8 +202,8 @@ private:
     void updateEy();
     void updateEz();
     void updateElectricAndVeloityFields();
-    void updateSource(unsigned n);    
-    cpml<MyDataF, unsigned int> pml;
+    void updateSource(unsigned n);
+    cpml<MyDataF> pml;
 
 };
 
