@@ -41,7 +41,7 @@ all: formulations.pdf cpml.o
 
 
 
-$(OBJECTS):%.o:%.h
+$(OBJECTS):%.o:%.cpp
 	$(CXX) -c $< $(CXXFLAGS)
 
 
