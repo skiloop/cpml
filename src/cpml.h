@@ -221,10 +221,6 @@ public:
     void updateCPML_M_Fields(data3d<type1> &Hx, data3d<type1>& Hy, data3d<type1> &Hz,
             const data3d<type1> & Ex, const data3d<type1> & Ey, const data3d<type1> & Ez);
 
-    //=======================================================
-    // private functions
-    //=======================================================
-private:
     /**
      * 
      * @param pmlWidth
@@ -242,11 +238,11 @@ private:
     void setCPMLRegion(short width_xn, short width_xp, short width_yn, short width_yp, short width_zn, short width_zp);
     /**
      * 
-     * @param imax
-     * @param jmax
-     * @param kmax
+     * @param nx
+     * @param ny
+     * @param nz
      */
-    void createCPMLArrays(unsigned imax, unsigned jmax, unsigned kmax);
+    void createCPMLArrays(unsigned nx, unsigned ny, unsigned nz);
     /**
      * 
      * @param pmlOrder
@@ -274,6 +270,10 @@ private:
             data3d<type1>&Ceyhz, data3d<type1>&Cezhy, data3d<type1>&Chyez, data3d<type1>&Chzey,
             data3d<type1>&Cexhz, data3d<type1>&Cezhx, data3d<type1>&Chxez, data3d<type1>&Chzex,
             data3d<type1>&Ceyhx, data3d<type1>&Cexhy, data3d<type1>&Chyex, data3d<type1>&Chxey);
+    //=======================================================
+    // private functions
+    //=======================================================
+private:
     /**
      * 
      * @param pmlOrder

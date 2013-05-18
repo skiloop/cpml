@@ -268,6 +268,39 @@ void cpml<type1>::createCPMLArrays(unsigned nx, unsigned ny, unsigned nz) {
 }
 
 template<class type1>
+void cpml<type1>::setCPMLRegion(short pmlWidth) {
+    setCPMLRegion(pmlWidth, pmlWidth, pmlWidth, pmlWidth, pmlWidth, pmlWidth);
+}
+
+template<class type1>
+void cpml<type1>::setCPMLRegion(short width_xn, short width_xp, short width_yn, short width_yp, short width_zn, short width_zp) {
+    n_cpml_xn = width_xn;
+    n_cpml_xp = width_xp;
+    n_cpml_yn = width_yn;
+    n_cpml_yp = width_yp;
+    n_cpml_zn = width_zn;
+    n_cpml_zp = width_zp;
+    if (n_cpml_xn > 0) {
+        is_cpml_xn = true;
+    }
+    if (n_cpml_xp > 0) {
+        is_cpml_xp = true;
+    }
+    if (n_cpml_yn > 0) {
+        is_cpml_yn = true;
+    }
+    if (n_cpml_yp > 0) {
+        is_cpml_yp = true;
+    }
+    if (n_cpml_zn > 0) {
+        is_cpml_zn = true;
+    }
+    if (n_cpml_zp > 0) {
+        is_cpml_zp = true;
+    }
+}
+
+template<class type1>
 void cpml<type1>::initCoefficientArrays(short pmlOrder, type1 sigmaRatio, type1 kappaMax, type1 alphaMax, type1 dt, type1 dx, type1 dy, type1 dz,
         data3d<type1>&Ceyhz, data3d<type1>&Cezhy, data3d<type1>&Chyez, data3d<type1>&Chzey,
         data3d<type1>&Cexhz, data3d<type1>&Cezhx, data3d<type1>&Chxez, data3d<type1>&Chzex,
@@ -868,10 +901,10 @@ void cpml<type1>::updatePsi_ezy_yp(const data3d<type1>& Hx) {
 
 template<class type1>
 void cpml<type1>::updatePsi_exz_zp(const data3d<type1>& Hy) {
-    for (unsigned k = 0, iez = Hy.nz - n_cpml_zp ; k < n_cpml_zp; k++, iez++) {
+    for (unsigned k = 0, iez = Hy.nz - n_cpml_zp; k < n_cpml_zp; k++, iez++) {
         for (unsigned i = 0; i < Psi_exz_zp.nx; i++) {
             for (unsigned j = 0; j < Psi_exz_zp.ny; j++) {
-                Psi_exz_zp.p[i][j][k] = cpml_b_ez_zp.p[k] * Psi_exz_zp.p[i][j][k] + cpml_a_ez_zp.p[k]*(Hy.p[i][j][iez ] - Hy.p[i][j][iez-1]);
+                Psi_exz_zp.p[i][j][k] = cpml_b_ez_zp.p[k] * Psi_exz_zp.p[i][j][k] + cpml_a_ez_zp.p[k]*(Hy.p[i][j][iez ] - Hy.p[i][j][iez - 1]);
             }
         }
     }
@@ -893,7 +926,7 @@ void cpml<type1>::updatePsi_eyx_xp(const data3d<type1>& Hz) {
     for (unsigned i = 0, ihz = Hz.nx - n_cpml_xp; i < n_cpml_xp; i++, ihz++) {
         for (unsigned j = 0; j < Psi_eyx_xp.ny; j++) {
             for (unsigned k = 0; k < Psi_eyx_xp.nz; k++) {
-                Psi_eyx_xp.p[i][j][k] = cpml_b_ex_xp.p[i] * Psi_eyx_xp.p[i][j][k] + cpml_a_ex_xp.p[i]*(Hz.p[ihz][j][k] - Hz.p[ihz-1][j][k]);
+                Psi_eyx_xp.p[i][j][k] = cpml_b_ex_xp.p[i] * Psi_eyx_xp.p[i][j][k] + cpml_a_ex_xp.p[i]*(Hz.p[ihz][j][k] - Hz.p[ihz - 1][j][k]);
             }
         }
     }
@@ -915,7 +948,7 @@ void cpml<type1>::updatePsi_hyz_zp(const data3d<type1>& Ex) {
     for (unsigned k = 0, ikz = Ex.nz - n_cpml_zp; k < n_cpml_zp; k++, ikz++) {
         for (unsigned i = 0; i < Psi_hyz_zp.nx; i++) {
             for (unsigned j = 0; j < Psi_hyz_zp.ny; j++) {
-                Psi_hyz_zp.p[i][j][k] = Psi_hyz_zp.p[i][j][k] * cpml_b_mz_zp.p[k] + cpml_a_mz_zp.p[k]*(Ex.p[i][j][ikz] - Ex.p[i][j][ikz-1]);
+                Psi_hyz_zp.p[i][j][k] = Psi_hyz_zp.p[i][j][k] * cpml_b_mz_zp.p[k] + cpml_a_mz_zp.p[k]*(Ex.p[i][j][ikz] - Ex.p[i][j][ikz - 1]);
             }
         }
     }
@@ -926,7 +959,7 @@ void cpml<type1>::updatePsi_hzy_yp(const data3d<type1>& Ex) {
     for (unsigned j = 0, jhy = Ex.ny - n_cpml_yp; j < n_cpml_yp; j++, jhy++) {
         for (unsigned i = 0; i < Psi_hzy_yp.nx; i++) {
             for (unsigned k = 0; k < Psi_hzy_yp.nz; k++) {
-                Psi_hzy_yp.p[i][j][k] = Psi_hzy_yp.p[i][j][k] * cpml_b_my_yp.p[j] + cpml_a_my_yp.p[j]*(Ex.p[i][jhy][k] - Ex.p[i][jhy-1 ][k]);
+                Psi_hzy_yp.p[i][j][k] = Psi_hzy_yp.p[i][j][k] * cpml_b_my_yp.p[j] + cpml_a_my_yp.p[j]*(Ex.p[i][jhy][k] - Ex.p[i][jhy - 1 ][k]);
             }
         }
     }
@@ -937,7 +970,7 @@ void cpml<type1>::updatePsi_hxz_zp(const data3d<type1>& Ey) {
     for (unsigned k = 0, khz = Ey.nz - n_cpml_zp; k < n_cpml_zp; k++, khz++) {
         for (unsigned j = 0; j < Psi_hxz_zp.ny; j++) {
             for (unsigned i = 0; i < Psi_hxz_zp.nx; i++) {
-                Psi_hxz_zp.p[i][j][k] = Psi_hxz_zp.p[i][j][k] * cpml_b_mz_zp.p[k] + cpml_a_mz_zp.p[k]*(Ey.p[i][j][khz] - Ey.p[i][j][khz-1]);
+                Psi_hxz_zp.p[i][j][k] = Psi_hxz_zp.p[i][j][k] * cpml_b_mz_zp.p[k] + cpml_a_mz_zp.p[k]*(Ey.p[i][j][khz] - Ey.p[i][j][khz - 1]);
             }
         }
     }
@@ -948,7 +981,7 @@ void cpml<type1>::updatePsi_hzx_xp(const data3d<type1>& Ey) {
     for (unsigned i = 0, ihx = Ey.nx - n_cpml_xp; i < n_cpml_xp; i++, ihx++) {
         for (unsigned j = 0; j < Psi_hzx_xp.ny; j++) {
             for (unsigned k = 0; k < Psi_hzx_xp.nz; k++) {
-                Psi_hzx_xp.p[i][j][k] = Psi_hzx_xp.p[i][j][k] * cpml_b_mx_xp.p[i] + cpml_a_mx_xp.p[i]*(Ey.p[ihx][j][k] - Ey.p[ihx-1][j][k]);
+                Psi_hzx_xp.p[i][j][k] = Psi_hzx_xp.p[i][j][k] * cpml_b_mx_xp.p[i] + cpml_a_mx_xp.p[i]*(Ey.p[ihx][j][k] - Ey.p[ihx - 1][j][k]);
             }
         }
     }
@@ -959,7 +992,7 @@ void cpml<type1>::updatePsi_hyx_xp(const data3d<type1>& Ez) {
     for (unsigned i = 0, imx = Ez.nx - n_cpml_zp; i < n_cpml_zp; i++, imx++) {
         for (unsigned j = 0; j < Psi_hyx_xp.ny; j++) {
             for (unsigned k = 0; k < Psi_hyx_xp.nz; k++) {
-                Psi_hyx_xp.p[i][j][k] = Psi_hyx_xp.p[i][j][k] * cpml_b_mx_xp.p[i] + cpml_a_mx_xp.p[i]*(Ez.p[imx][j][k] - Ez.p[imx-1 ][j][k]);
+                Psi_hyx_xp.p[i][j][k] = Psi_hyx_xp.p[i][j][k] * cpml_b_mx_xp.p[i] + cpml_a_mx_xp.p[i]*(Ez.p[imx][j][k] - Ez.p[imx - 1 ][j][k]);
             }
         }
     }
@@ -967,10 +1000,10 @@ void cpml<type1>::updatePsi_hyx_xp(const data3d<type1>& Ez) {
 
 template<class type1>
 void cpml<type1>::updatePsi_hxy_yp(const data3d<type1>& Ez) {
-    for (unsigned j = 0, jmy = Ez.ny - n_cpml_yp ; j < n_cpml_yp; j++, jmy++) {
+    for (unsigned j = 0, jmy = Ez.ny - n_cpml_yp; j < n_cpml_yp; j++, jmy++) {
         for (unsigned i = 0; i < Psi_hxy_yp.nx; i++) {
             for (unsigned k = 0; k < Psi_hxy_yp.nz; k++) {
-                Psi_hxy_yp.p[i][j][k] = Psi_hxy_yp.p[i][j][k] * cpml_b_my_yp.p[j] + cpml_a_my_yp.p[j]*(Ez.p[i][jmy][k] - Ez.p[i][jmy-1][k]);
+                Psi_hxy_yp.p[i][j][k] = Psi_hxy_yp.p[i][j][k] * cpml_b_my_yp.p[j] + cpml_a_my_yp.p[j]*(Ez.p[i][jmy][k] - Ez.p[i][jmy - 1][k]);
             }
         }
     }
@@ -978,7 +1011,7 @@ void cpml<type1>::updatePsi_hxy_yp(const data3d<type1>& Ez) {
 
 template<class type1>
 void cpml<type1>::updatePsi_eyz_zn(const data3d<type1>& Hx) {
-    for (unsigned k = 0,kplus=1; k < n_cpml_zn; k++,kplus++) {
+    for (unsigned k = 0, kplus = 1; k < n_cpml_zn; k++, kplus++) {
         for (unsigned i = 0; i < Psi_eyz_zn.nx; i++) {
             for (unsigned j = 0; Psi_eyz_zn.ny; j++) {
                 Psi_eyz_zn.p[i][j][k] = cpml_b_ez_zn.p[k] * Psi_eyz_zn.p[i][j][k] + cpml_a_ez_zn.p[k]*(Hx.p[i][j][kplus] - Hx.p[i][j][k]);
@@ -989,7 +1022,7 @@ void cpml<type1>::updatePsi_eyz_zn(const data3d<type1>& Hx) {
 
 template<class type1>
 void cpml<type1>::updatePsi_ezy_yn(const data3d<type1>& Hx) {
-    for (unsigned j = 0,jplus=1; j < n_cpml_yn; j++,jplus++) {
+    for (unsigned j = 0, jplus = 1; j < n_cpml_yn; j++, jplus++) {
         for (unsigned i = 0; i < Psi_ezy_yn.nx; i++) {
             for (unsigned k = 0; k < Psi_ezy_yn.nz; k++) {
                 Psi_ezy_yn.p[i][j][k] = cpml_b_ey_yn.p[j] * Psi_ezy_yn.p[i][j][k] + cpml_a_ey_yn.p[j]*(Hx.p[i][jplus][k] - Hx.p[i][j][k]);
@@ -1000,7 +1033,7 @@ void cpml<type1>::updatePsi_ezy_yn(const data3d<type1>& Hx) {
 
 template<class type1>
 void cpml<type1>::updatePsi_exz_zn(const data3d<type1>& Hy) {
-    for (unsigned k = 0,kplus=1; k < n_cpml_zn; k++,kplus++) {
+    for (unsigned k = 0, kplus = 1; k < n_cpml_zn; k++, kplus++) {
         for (unsigned i = 0; i < Psi_exz_zn.nx; i++) {
             for (unsigned j = 0; j < Psi_exz_zn.ny; j++) {
                 Psi_exz_zn.p[i][j][k] = cpml_b_ez_zn.p[k] * Psi_exz_zn.p[i][j][k] + cpml_a_ez_zn.p[k]*(Hy.p[i][j][kplus] - Hy.p[i][j][k]);
@@ -1033,7 +1066,7 @@ void cpml<type1>::updatePsi_eyx_xn(const data3d<type1>& Hz) {
 
 template<class type1>
 void cpml<type1>::updatePsi_exy_yn(const data3d<type1>& Hz) {
-    for (unsigned j = 0,jplus=1; j < n_cpml_yn; j++,jplus++) {
+    for (unsigned j = 0, jplus = 1; j < n_cpml_yn; j++, jplus++) {
         for (unsigned k = 0; k < Psi_exy_yn.nz; k++) {
             for (unsigned i = 0; i < Psi_exy_yn.ny; i++) {
                 Psi_exy_yn.p[i][j][k] = cpml_b_ey_yn.p[j] * Psi_exy_yn.p[i][j][k] + cpml_a_ey_yn.p[j]*(Hz.p[i][jplus][k] - Hz.p[i][j][k]);
@@ -1044,7 +1077,7 @@ void cpml<type1>::updatePsi_exy_yn(const data3d<type1>& Hz) {
 
 template<class type1>
 void cpml<type1>::updatePsi_hyz_zn(const data3d<type1>& Ex) {
-    for (unsigned k = 0,kplus=1; k < n_cpml_zn; k++,kplus++) {
+    for (unsigned k = 0, kplus = 1; k < n_cpml_zn; k++, kplus++) {
         for (unsigned j = 0; j < Psi_hyz_zn.ny; j++) {
             for (unsigned i = 0; i < Psi_hyz_zn.nx; i++) {
                 Psi_hyz_zn.p[i][j][k] = cpml_b_mz_zn.p[k] * Psi_hyz_zn.p[i][j][k] + cpml_a_mz_zn.p[k]*(Ex.p[i][j][kplus] - Ex.p[i][j][k]);
@@ -1055,7 +1088,7 @@ void cpml<type1>::updatePsi_hyz_zn(const data3d<type1>& Ex) {
 
 template<class type1>
 void cpml<type1>::updatePsi_hzy_yn(const data3d<type1>& Ex) {
-    for (unsigned j = 0,jplus=1; j < n_cpml_yn; j++,jplus++) {
+    for (unsigned j = 0, jplus = 1; j < n_cpml_yn; j++, jplus++) {
         for (unsigned i = 0; i < Psi_hzy_yn.nx; i++) {
             for (unsigned k = 0; k < Psi_hzy_yn.nz; k++) {
                 Psi_hzy_yn.p[i][j][k] = cpml_b_my_yn.p[j] * Psi_hzy_yn.p[i][j][k] + cpml_a_my_yn.p[j]*(Ex.p[i][jplus][k] - Ex.p[i][j][k]);
@@ -1066,7 +1099,7 @@ void cpml<type1>::updatePsi_hzy_yn(const data3d<type1>& Ex) {
 
 template<class type1>
 void cpml<type1>::updatePsi_hxz_zn(const data3d<type1>& Ey) {
-    for (unsigned k = 0,kplus=1; k < n_cpml_zn; k++,kplus++) {
+    for (unsigned k = 0, kplus = 1; k < n_cpml_zn; k++, kplus++) {
         for (unsigned i = 0; i < Psi_hxz_zn.nx; i++) {
             for (unsigned j = 0; j < Psi_hxz_zn.ny; j++) {
                 Psi_hxz_zn.p[i][j][k] = cpml_b_mz_zn.p[k] * Psi_hxz_zn.p[i][j][k] + cpml_a_mz_zn.p[k]*(Ey.p[i][j][kplus] - Ey.p[i][j][k]);
@@ -1099,7 +1132,7 @@ void cpml<type1>::updatePsi_hyx_xn(const data3d<type1>& Ez) {
 
 template<class type1>
 void cpml<type1>::updatePsi_hxy_yn(const data3d<type1>& Ez) {
-    for (unsigned j = 0,jplus=1; j < n_cpml_yn; j++,jplus++) {
+    for (unsigned j = 0, jplus = 1; j < n_cpml_yn; j++, jplus++) {
         for (unsigned i = 0; i < Psi_hxy_yn.nx; i++) {
             for (unsigned k = 0; k < Psi_hxy_yn.nz; k++) {
                 Psi_hxy_yn.p[i][j][k] = Psi_hxy_yn.p[i][j][k] * cpml_b_my_yn.p[j] + cpml_a_my_yn.p[j]*(Ez.p[i][jplus][k] - Ez.p[i][j][k]);
