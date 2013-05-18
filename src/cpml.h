@@ -11,7 +11,6 @@
 #include "datastruct.h"
 
 #ifndef COMMON_H
-
 // some common constants
 const double C = 2.99792458E8; // speed of light in free space
 const double me = 9.110e-31; // electricity mass
