@@ -18,7 +18,7 @@ CXXFLAGS	=-Wall -g
 ###########################
 ## virtual path
 ###########################
-VPATH=doc:src
+VPATH=doc:src:test
 
 
 ###########################
@@ -29,7 +29,7 @@ TAGET=formulations.pdf
 ###########################
 ## objects
 ###########################
-OBJECTS=cpml.o
+OBJECTS=cpml.o inputChecker.o main.o fdtd.o
 
 
 ###########################
@@ -37,7 +37,10 @@ OBJECTS=cpml.o
 ###########################
 .PHONY:all clean
 
-all: formulations.pdf cpml.o
+all: formulations.pdf main
+
+main:$(OBJECTS)
+	$(CXX) -o $@ $^
 
 
 
