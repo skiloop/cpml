@@ -579,95 +579,95 @@ void cpml<type1>::createCPMLArrays(unsigned nx, unsigned ny, unsigned nz) {
     unsigned nzp1 = nz + 1;
     if (is_cpml_xn) {
         // x direction
-        cpml_a_ex_xn.CreateStruct(n_cpml_xn);
-        cpml_b_ex_xn.CreateStruct(n_cpml_xn);
-        cpml_a_mx_xn.CreateStruct(n_cpml_xn);
-        cpml_b_mx_xn.CreateStruct(n_cpml_xn);
-        Psi_eyx_xn.CreateStruct(n_cpml_xn, ny, nzp1);
-        Psi_ezx_xn.CreateStruct(n_cpml_xn, nyp1, nz);
-        Psi_hyx_xn.CreateStruct(n_cpml_xn, nyp1, nz);
-        Psi_hzx_xn.CreateStruct(n_cpml_xn, ny, nzp1);
-        CPsi_eyx_xn.CreateStruct(n_cpml_xn, ny, nzp1);
-        CPsi_ezx_xn.CreateStruct(n_cpml_xn, nyp1, nz);
-        CPsi_hyx_xn.CreateStruct(n_cpml_xn, nyp1, nz);
-        CPsi_hzx_xn.CreateStruct(n_cpml_xn, ny, nzp1);
+        cpml_a_ex_xn.CreateStruct(n_cpml_xn,0.0);
+        cpml_b_ex_xn.CreateStruct(n_cpml_xn,0.0);
+        cpml_a_mx_xn.CreateStruct(n_cpml_xn,0.0);
+        cpml_b_mx_xn.CreateStruct(n_cpml_xn,0.0);
+        Psi_eyx_xn.CreateStruct(n_cpml_xn, ny, nzp1,0.0);
+        Psi_ezx_xn.CreateStruct(n_cpml_xn, nyp1, nz,0.0);
+        Psi_hyx_xn.CreateStruct(n_cpml_xn, nyp1, nz,0.0);
+        Psi_hzx_xn.CreateStruct(n_cpml_xn, ny, nzp1,0.0);
+        CPsi_eyx_xn.CreateStruct(n_cpml_xn, ny, nzp1,0.0);
+        CPsi_ezx_xn.CreateStruct(n_cpml_xn, nyp1, nz,0.0);
+        CPsi_hyx_xn.CreateStruct(n_cpml_xn, nyp1, nz,0.0);
+        CPsi_hzx_xn.CreateStruct(n_cpml_xn, ny, nzp1,0.0);
     }
     // xp arrays
     if (is_cpml_xp) {
-        cpml_a_ex_xp.CreateStruct(n_cpml_xp);
-        cpml_b_ex_xp.CreateStruct(n_cpml_xp);
-        cpml_a_mx_xp.CreateStruct(n_cpml_xp);
-        cpml_b_mx_xp.CreateStruct(n_cpml_xp);
-        Psi_eyx_xp.CreateStruct(n_cpml_xp, ny, nzp1);
-        Psi_ezx_xp.CreateStruct(n_cpml_xp, nyp1, nz);
-        Psi_hyx_xp.CreateStruct(n_cpml_xp, nyp1, nz);
-        Psi_hzx_xp.CreateStruct(n_cpml_xp, ny, nzp1);
-        CPsi_eyx_xp.CreateStruct(n_cpml_xp, ny, nzp1);
-        CPsi_ezx_xp.CreateStruct(n_cpml_xp, nyp1, nz);
-        CPsi_hyx_xp.CreateStruct(n_cpml_xp, nyp1, nz);
-        CPsi_hzx_xp.CreateStruct(n_cpml_xp, ny, nzp1);
+        cpml_a_ex_xp.CreateStruct(n_cpml_xp,0.0);
+        cpml_b_ex_xp.CreateStruct(n_cpml_xp,0.0);
+        cpml_a_mx_xp.CreateStruct(n_cpml_xp,0.0);
+        cpml_b_mx_xp.CreateStruct(n_cpml_xp,0.0);
+        Psi_eyx_xp.CreateStruct(n_cpml_xp, ny, nzp1,0.0);
+        Psi_ezx_xp.CreateStruct(n_cpml_xp, nyp1, nz,0.0);
+        Psi_hyx_xp.CreateStruct(n_cpml_xp, nyp1, nz,0.0);
+        Psi_hzx_xp.CreateStruct(n_cpml_xp, ny, nzp1,0.0);
+        CPsi_eyx_xp.CreateStruct(n_cpml_xp, ny, nzp1,0.0);
+        CPsi_ezx_xp.CreateStruct(n_cpml_xp, nyp1, nz,0.0);
+        CPsi_hyx_xp.CreateStruct(n_cpml_xp, nyp1, nz,0.0);
+        CPsi_hzx_xp.CreateStruct(n_cpml_xp, ny, nzp1,0.0);
     }
     // yn arrays
     if (is_cpml_yn) {
         // y direction
-        cpml_a_ey_yn.CreateStruct(n_cpml_yn);
-        cpml_b_ey_yn.CreateStruct(n_cpml_yn);
-        cpml_a_my_yn.CreateStruct(n_cpml_yn);
-        cpml_b_my_yn.CreateStruct(n_cpml_yn);
-        Psi_exy_yn.CreateStruct(nx, n_cpml_yn, nzp1);
-        Psi_ezy_yn.CreateStruct(nxp1, n_cpml_yn, nz);
-        Psi_hxy_yn.CreateStruct(nxp1, n_cpml_yn, nz);
-        Psi_hzy_yn.CreateStruct(nx, n_cpml_yn, nzp1);
-        CPsi_exy_yn.CreateStruct(nx, n_cpml_yn, nzp1);
-        CPsi_ezy_yn.CreateStruct(nxp1, n_cpml_yn, nz);
-        CPsi_hxy_yn.CreateStruct(nxp1, n_cpml_yn, nz);
-        CPsi_hzy_yn.CreateStruct(nx, n_cpml_yn, nzp1);
+        cpml_a_ey_yn.CreateStruct(n_cpml_yn,0.0);
+        cpml_b_ey_yn.CreateStruct(n_cpml_yn,0.0);
+        cpml_a_my_yn.CreateStruct(n_cpml_yn,0.0);
+        cpml_b_my_yn.CreateStruct(n_cpml_yn,0.0);
+        Psi_exy_yn.CreateStruct(nx, n_cpml_yn, nzp1,0.0);
+        Psi_ezy_yn.CreateStruct(nxp1, n_cpml_yn, nz,0.0);
+        Psi_hxy_yn.CreateStruct(nxp1, n_cpml_yn, nz,0.0);
+        Psi_hzy_yn.CreateStruct(nx, n_cpml_yn, nzp1,0.0);
+        CPsi_exy_yn.CreateStruct(nx, n_cpml_yn, nzp1,0.0);
+        CPsi_ezy_yn.CreateStruct(nxp1, n_cpml_yn, nz,0.0);
+        CPsi_hxy_yn.CreateStruct(nxp1, n_cpml_yn, nz,0.0);
+        CPsi_hzy_yn.CreateStruct(nx, n_cpml_yn, nzp1,0.0);
     }
     // yp arrays
     if (is_cpml_yp) {
-        cpml_a_ey_yp.CreateStruct(n_cpml_yp);
-        cpml_b_ey_yp.CreateStruct(n_cpml_yp);
-        cpml_a_my_yp.CreateStruct(n_cpml_yp);
-        cpml_b_my_yp.CreateStruct(n_cpml_yp);
-        Psi_exy_yp.CreateStruct(nx, n_cpml_yp, nzp1);
-        Psi_ezy_yp.CreateStruct(nxp1, n_cpml_yp, nz);
-        Psi_hxy_yp.CreateStruct(nxp1, n_cpml_yp, nz);
-        Psi_hzy_yp.CreateStruct(nx, n_cpml_yp, nzp1);
-        CPsi_exy_yp.CreateStruct(nx, n_cpml_yp, nzp1);
-        CPsi_ezy_yp.CreateStruct(nxp1, n_cpml_yp, nz);
-        CPsi_hxy_yp.CreateStruct(nxp1, n_cpml_yp, nz);
-        CPsi_hzy_yp.CreateStruct(nx, n_cpml_yp, nzp1);
+        cpml_a_ey_yp.CreateStruct(n_cpml_yp,0.0);
+        cpml_b_ey_yp.CreateStruct(n_cpml_yp,0.0);
+        cpml_a_my_yp.CreateStruct(n_cpml_yp,0.0);
+        cpml_b_my_yp.CreateStruct(n_cpml_yp,0.0);
+        Psi_exy_yp.CreateStruct(nx, n_cpml_yp, nzp1,0.0);
+        Psi_ezy_yp.CreateStruct(nxp1, n_cpml_yp, nz,0.0);
+        Psi_hxy_yp.CreateStruct(nxp1, n_cpml_yp, nz,0.0);
+        Psi_hzy_yp.CreateStruct(nx, n_cpml_yp, nzp1,0.0);
+        CPsi_exy_yp.CreateStruct(nx, n_cpml_yp, nzp1,0.0);
+        CPsi_ezy_yp.CreateStruct(nxp1, n_cpml_yp, nz,0.0);
+        CPsi_hxy_yp.CreateStruct(nxp1, n_cpml_yp, nz,0.0);
+        CPsi_hzy_yp.CreateStruct(nx, n_cpml_yp, nzp1,0.0);
     }
     // zn arrays
     if (is_cpml_zn) {
         // z direction
-        cpml_a_ez_zn.CreateStruct(n_cpml_zn);
-        cpml_b_ez_zn.CreateStruct(n_cpml_zn);
-        cpml_a_mz_zn.CreateStruct(n_cpml_zn);
-        cpml_b_mz_zn.CreateStruct(n_cpml_zn);
-        Psi_exz_zn.CreateStruct(nx, nyp1, n_cpml_zn);
-        Psi_eyz_zn.CreateStruct(nxp1, ny, n_cpml_zn);
-        Psi_hxz_zn.CreateStruct(nxp1, ny, n_cpml_zn);
-        Psi_hyz_zn.CreateStruct(nx, nyp1, n_cpml_zn);
-        CPsi_exz_zn.CreateStruct(nx, nyp1, n_cpml_zn);
-        CPsi_eyz_zn.CreateStruct(nxp1, ny, n_cpml_zn);
-        CPsi_hxz_zn.CreateStruct(nxp1, ny, n_cpml_zn);
-        CPsi_hyz_zn.CreateStruct(nx, nyp1, n_cpml_zn);
+        cpml_a_ez_zn.CreateStruct(n_cpml_zn,0.0);
+        cpml_b_ez_zn.CreateStruct(n_cpml_zn,0.0);
+        cpml_a_mz_zn.CreateStruct(n_cpml_zn,0.0);
+        cpml_b_mz_zn.CreateStruct(n_cpml_zn,0.0);
+        Psi_exz_zn.CreateStruct(nx, nyp1, n_cpml_zn,0.0);
+        Psi_eyz_zn.CreateStruct(nxp1, ny, n_cpml_zn,0.0);
+        Psi_hxz_zn.CreateStruct(nxp1, ny, n_cpml_zn,0.0);
+        Psi_hyz_zn.CreateStruct(nx, nyp1, n_cpml_zn,0.0);
+        CPsi_exz_zn.CreateStruct(nx, nyp1, n_cpml_zn,0.0);
+        CPsi_eyz_zn.CreateStruct(nxp1, ny, n_cpml_zn,0.0);
+        CPsi_hxz_zn.CreateStruct(nxp1, ny, n_cpml_zn,0.0);
+        CPsi_hyz_zn.CreateStruct(nx, nyp1, n_cpml_zn,0.0);
     }
     // zp arrays
     if (is_cpml_zp) {
-        cpml_a_ez_zp.CreateStruct(n_cpml_zp);
-        cpml_b_ez_zp.CreateStruct(n_cpml_zp);
-        cpml_a_mz_zp.CreateStruct(n_cpml_zp);
-        cpml_b_mz_zp.CreateStruct(n_cpml_zp);
-        Psi_exz_zp.CreateStruct(nx, nyp1, n_cpml_zp);
-        Psi_eyz_zp.CreateStruct(nxp1, ny, n_cpml_zp);
-        Psi_hxz_zp.CreateStruct(nxp1, ny, n_cpml_zp);
-        Psi_hyz_zp.CreateStruct(nx, nyp1, n_cpml_zp);
-        CPsi_exz_zp.CreateStruct(nx, nyp1, n_cpml_zp);
-        CPsi_eyz_zp.CreateStruct(nxp1, ny, n_cpml_zp);
-        CPsi_hxz_zp.CreateStruct(nxp1, ny, n_cpml_zp);
-        CPsi_hyz_zp.CreateStruct(nx, nyp1, n_cpml_zp);
+        cpml_a_ez_zp.CreateStruct(n_cpml_zp,0.0);
+        cpml_b_ez_zp.CreateStruct(n_cpml_zp,0.0);
+        cpml_a_mz_zp.CreateStruct(n_cpml_zp,0.0);
+        cpml_b_mz_zp.CreateStruct(n_cpml_zp,0.0);
+        Psi_exz_zp.CreateStruct(nx, nyp1, n_cpml_zp,0.0);
+        Psi_eyz_zp.CreateStruct(nxp1, ny, n_cpml_zp,0.0);
+        Psi_hxz_zp.CreateStruct(nxp1, ny, n_cpml_zp,0.0);
+        Psi_hyz_zp.CreateStruct(nx, nyp1, n_cpml_zp,0.0);
+        CPsi_exz_zp.CreateStruct(nx, nyp1, n_cpml_zp,0.0);
+        CPsi_eyz_zp.CreateStruct(nxp1, ny, n_cpml_zp,0.0);
+        CPsi_hxz_zp.CreateStruct(nxp1, ny, n_cpml_zp,0.0);
+        CPsi_hyz_zp.CreateStruct(nx, nyp1, n_cpml_zp,0.0);
     }
 }
 
@@ -729,28 +729,36 @@ void cpml<type1>::initCoefficientArraysXN(short pmlOrder, type1 sigmaRatio, type
             type1 rho_e_pmlOrder = pow(rho_e, pmlOrder);
             type1 rho_m_pmlOrder = pow(rho_m, pmlOrder);
             type1 sigma_pex = sigmaMax*rho_e_pmlOrder;
-            type1 sigma_pmx = sigmaMax * rho_m_pmlOrder*Mu0DivEps0;
+            type1 sigma_pmx = sigmaMax * rho_m_pmlOrder;
             type1 kappa_ex = 1 + (kappaMax - 1) * rho_e_pmlOrder;
             type1 kappa_mx = 1 + (kappaMax - 1) * rho_m_pmlOrder;
             type1 alpha_ex = alphaMax * (rho_e);
-            type1 alpha_mx = alphaMax * (rho_m) * Mu0DivEps0;
+            type1 alpha_mx = alphaMax * (rho_m);
             cpml_b_ex_xn.p[i] = exp((-dt / eps_0) * (sigma_pex / kappa_ex + alpha_ex));
-            cpml_b_mx_xn.p[i] = exp((-dt / mu_0) * (sigma_pmx / kappa_mx + alpha_mx));
+            cpml_b_mx_xn.p[i] = exp((-dt / eps_0) * (sigma_pmx / kappa_mx + alpha_mx));
             cpml_a_ex_xn.p[i] = 1 / dx * (cpml_b_ex_xn.p[i] - 1.0) * sigma_pex / (kappa_ex * (sigma_pex + kappa_ex * alpha_ex));
             cpml_a_mx_xn.p[i] = 1 / dx * (cpml_b_mx_xn.p[i] - 1.0) * sigma_pmx / (kappa_mx * (sigma_pmx + kappa_mx * alpha_mx));
             for (unsigned j = 0; j < Psi_eyx_xn.ny; j++) {
                 for (unsigned k = 0; k < Psi_eyx_xn.nz; k++) {
                     CPsi_eyx_xn.p[i][j][k] = Ceyhz.p[iplus][j][k] * dx;
-                    CPsi_ezx_xn.p[i][k][j] = Cezhy.p[iplus][k][j] * dx;
                     Ceyhz.p[iplus][j][k] = Ceyhz.p[iplus][j][k] / kappa_ex;
+                }
+            }
+            for (unsigned j = 0; j < Psi_ezx_xn.nz; j++) {
+                for (unsigned k = 0; k < Psi_ezx_xn.ny; k++) {
+                    CPsi_ezx_xn.p[i][k][j] = Cezhy.p[iplus][k][j] * dx;
                     Cezhy.p[iplus][k][j] = Cezhy.p[iplus][k][j] / kappa_ex;
                 }
             }
             for (unsigned j = 0; j < Psi_hyx_xn.ny; j++) {
                 for (unsigned k = 0; k < Psi_hyx_xn.nz; k++) {
                     CPsi_hyx_xn.p[i][j][k] = Chyez.p[i][j][k] * dx;
-                    CPsi_hzx_xn.p[i][k][j] = Chzey.p[i][k][j] * dx;
                     Chyez.p[i][j][k] = Chyez.p[i][j][k] / kappa_mx;
+                }
+            }
+            for (unsigned j = 0; j < Psi_hzx_xn.nz; j++) {
+                for (unsigned k = 0; k < Psi_hzx_xn.ny; k++) {
+                    CPsi_hzx_xn.p[i][k][j] = Chzey.p[i][k][j] * dx;
                     Chzey.p[i][k][j] = Chzey.p[i][k][j] / kappa_mx;
                 }
             }
@@ -771,29 +779,37 @@ void cpml<type1>::initCoefficientArraysXP(short pmlOrder, type1 sigmaRatio, type
             type1 rho_e_pmlOrder = pow(rho_e, pmlOrder);
             type1 rho_m_pmlOrder = pow(rho_m, pmlOrder);
             type1 sigma_pex = sigmaMax*rho_e_pmlOrder;
-            type1 sigma_pmx = sigmaMax * rho_m_pmlOrder*Mu0DivEps0;
+            type1 sigma_pmx = sigmaMax * rho_m_pmlOrder;
             type1 kappa_ex = 1 + (kappaMax - 1) * rho_e_pmlOrder;
             type1 kappa_mx = 1 + (kappaMax - 1) * rho_m_pmlOrder;
             type1 alpha_ex = alphaMax * (rho_e);
-            type1 alpha_mx = alphaMax * (rho_m) * Mu0DivEps0;
+            type1 alpha_mx = alphaMax * (rho_m);
             cpml_b_ex_xp.p[i] = exp((-dt / eps_0) * (sigma_pex / kappa_ex + alpha_ex));
-            cpml_b_mx_xp.p[i] = exp((-dt / mu_0) * (sigma_pmx / kappa_mx + alpha_mx));
+            cpml_b_mx_xp.p[i] = exp((-dt / eps_0) * (sigma_pmx / kappa_mx + alpha_mx));
             cpml_a_ex_xp.p[i] = 1 / dx * (cpml_b_ex_xp.p[i] - 1.0) * sigma_pex / (kappa_ex * (sigma_pex + kappa_ex * alpha_ex));
             cpml_a_mx_xp.p[i] = 1 / dx * (cpml_b_mx_xp.p[i] - 1.0) * sigma_pmx / (kappa_mx * (sigma_pmx + kappa_mx * alpha_mx));
 
             for (unsigned j = 0; j < Psi_eyx_xp.ny; j++) {
                 for (unsigned k = 0; k < Psi_eyx_xp.nz; k++) {
                     CPsi_eyx_xp.p[i][j][k] = Ceyhz.p[iex][j][k] * dx;
-                    CPsi_ezx_xp.p[i][k][j] = Cezhy.p[iex][k][j] * dx;
                     Ceyhz.p[iex][j][k] = Ceyhz.p[iex][j][k] / kappa_ex;
+                }
+            }
+            for (unsigned j = 0; j < Psi_ezx_xp.nz; j++) {
+                for (unsigned k = 0; k < Psi_ezx_xp.ny; k++) {
+                    CPsi_ezx_xp.p[i][k][j] = Cezhy.p[iex][k][j] * dx;
                     Cezhy.p[iex][k][j] = Cezhy.p[iex][k][j] / kappa_ex;
                 }
             }
             for (unsigned j = 0; j < Psi_hyx_xp.ny; j++) {
                 for (unsigned k = 0; k < Psi_hyx_xp.nz; k++) {
                     CPsi_hyx_xp.p[i][j][k] = Chyez.p[ihx][j][k] * dx;
-                    CPsi_hzx_xp.p[i][k][j] = Chzey.p[ihx][k][j] * dx;
                     Chyez.p[ihx][j][k] = Chyez.p[ihx][j][k] / kappa_mx;
+                }
+            }
+            for (unsigned j = 0; j < Psi_hzx_xp.nz; j++) {
+                for (unsigned k = 0; k < Psi_hzx_xp.ny; k++) {
+                    CPsi_hzx_xp.p[i][k][j] = Chzey.p[ihx][k][j] * dx;
                     Chzey.p[ihx][k][j] = Chzey.p[ihx][k][j] / kappa_mx;
                 }
             }
@@ -814,29 +830,37 @@ void cpml<type1>::initCoefficientArraysYN(short pmlOrder, type1 sigmaRatio, type
             type1 rho_e_pmlOrder = pow(rho_e, pmlOrder);
             type1 rho_m_pmlOrder = pow(rho_m, pmlOrder);
             type1 sigma_pey = sigmaMax*rho_e_pmlOrder;
-            type1 sigma_pmy = sigmaMax * rho_m_pmlOrder*Mu0DivEps0;
+            type1 sigma_pmy = sigmaMax * rho_m_pmlOrder;
             type1 kappa_ey = 1 + (kappaMax - 1) * rho_e_pmlOrder;
             type1 kappa_my = 1 + (kappaMax - 1) * rho_m_pmlOrder;
             type1 alpha_ey = alphaMax * (rho_e);
-            type1 alpha_my = alphaMax * (rho_m) * Mu0DivEps0;
+            type1 alpha_my = alphaMax * (rho_m);
             cpml_b_ey_yn.p[j] = exp((-dt / eps_0) * (sigma_pey / kappa_ey + alpha_ey));
-            cpml_b_my_yn.p[j] = exp((-dt / mu_0) * (sigma_pmy / kappa_my + alpha_my));
+            cpml_b_my_yn.p[j] = exp((-dt / eps_0) * (sigma_pmy / kappa_my + alpha_my));
             cpml_a_ey_yn.p[j] = 1 / dy * (cpml_b_ey_yn.p[j] - 1.0) * sigma_pey / (kappa_ey * (sigma_pey + kappa_ey * alpha_ey));
             cpml_a_my_yn.p[j] = 1 / dy * (cpml_b_my_yn.p[j] - 1.0) * sigma_pmy / (kappa_my * (sigma_pmy + kappa_my * alpha_my));
 
             for (unsigned i = 0; i < Psi_exy_yn.nx; i++) {
                 for (unsigned k = 0; k < Psi_exy_yn.nz; k++) {
                     CPsi_exy_yn.p[i][j][k] = Cexhz.p[i][jplus][k] * dy;
-                    CPsi_ezy_yn.p[k][j][i] = Cezhx.p[k][jplus][i] * dy;
                     Cexhz.p[i][jplus][k] = Cexhz.p[i][jplus][k] / kappa_ey;
+                }
+            }
+            for (unsigned i = 0; i < Psi_ezy_yn.nz; i++) {
+                for (unsigned k = 0; k < Psi_ezy_yn.nx; k++) {
+                    CPsi_ezy_yn.p[k][j][i] = Cezhx.p[k][jplus][i] * dy;
                     Cezhx.p[k][jplus][i] = Cezhx.p[k][jplus][i] / kappa_ey;
                 }
             }
             for (unsigned i = 0; i < Psi_hxy_yn.nx; i++) {
                 for (unsigned k = 0; k < Psi_hxy_yn.nz; k++) {
                     CPsi_hxy_yn.p[i][j][k] = Chxez.p[i][j][k] * dy;
-                    CPsi_hzy_yn.p[k][j][i] = Chzex.p[k][j][i] * dy;
                     Chxez.p[i][j][k] = Chxez.p[i][j][k] / kappa_my;
+                }
+            }
+            for (unsigned i = 0; i < Psi_hzy_yn.nz; i++) {
+                for (unsigned k = 0; k < Psi_hzy_yn.nx; k++) {
+                    CPsi_hzy_yn.p[k][j][i] = Chzex.p[k][j][i] * dy;
                     Chzex.p[k][j][i] = Chzex.p[k][j][i] / kappa_my;
                 }
             }
@@ -853,34 +877,41 @@ void cpml<type1>::initCoefficientArraysYP(short pmlOrder, type1 sigmaRatio, type
         unsigned ihx = Chxez.ny - n_cpml_yp;
         for (unsigned j = 0; j < n_cpml_yp; j++) {
             type1 rho_e = (j + 0.25) / n_cpml_yp;
-            type1 rho_m = (j + 0.75) / n_cpml_yp;
+            type1 rho_m = (j + 0.75) / n_cpml_yp;       
             type1 rho_e_pmlOrder = pow(rho_e, pmlOrder);
             type1 rho_m_pmlOrder = pow(rho_m, pmlOrder);
             type1 sigma_pey = sigmaMax*rho_e_pmlOrder;
-            type1 sigma_pmy = sigmaMax * rho_m_pmlOrder*Mu0DivEps0;
+            type1 sigma_pmy = sigmaMax * rho_m_pmlOrder;
             type1 kappa_ey = 1 + (kappaMax - 1) * rho_e_pmlOrder;
             type1 kappa_my = 1 + (kappaMax - 1) * rho_m_pmlOrder;
             type1 alpha_ey = alphaMax * (rho_e);
-            type1 alpha_my = alphaMax * (rho_m) * Mu0DivEps0;
+            type1 alpha_my = alphaMax * (rho_m);
             cpml_b_ey_yp.p[j] = exp((-dt / eps_0) * (sigma_pey / kappa_ey + alpha_ey));
-            cpml_b_my_yp.p[j] = exp((-dt / mu_0) * (sigma_pmy / kappa_my + alpha_my));
+            cpml_b_my_yp.p[j] = exp((-dt / eps_0) * (sigma_pmy / kappa_my + alpha_my));
             cpml_a_ey_yp.p[j] = 1 / dy * (cpml_b_ey_yp.p[j] - 1.0) * sigma_pey / (kappa_ey * (sigma_pey + kappa_ey * alpha_ey));
             cpml_a_my_yp.p[j] = 1 / dy * (cpml_b_my_yp.p[j] - 1.0) * sigma_pmy / (kappa_my * (sigma_pmy + kappa_my * alpha_my));
 
             for (unsigned i = 0; i < Psi_exy_yp.nx; i++) {
                 for (unsigned k = 0; k < Psi_exy_yp.nz; k++) {
-                    // TODO fix region size
                     CPsi_exy_yp.p[i][j][k] = Cexhz.p[i][iex][k] * dy;
-                    CPsi_ezy_yp.p[k][j][i] = Cezhx.p[k][iex][i] * dy;
                     Cexhz.p[i][iex][k] = Cexhz.p[i][iex][k] / kappa_ey;
+                }
+            }
+            for (unsigned i = 0; i < Psi_ezy_yp.nz; i++) {
+                for (unsigned k = 0; k < Psi_ezy_yp.nx; k++) {
+                    CPsi_ezy_yp.p[k][j][i] = Cezhx.p[k][iex][i] * dy;
                     Cezhx.p[k][iex][i] = Cezhx.p[k][iex][i] / kappa_ey;
                 }
             }
             for (unsigned i = 0; i < Psi_hxy_yp.nx; i++) {
                 for (unsigned k = 0; k < Psi_hxy_yp.nz; k++) {
                     CPsi_hxy_yp.p[i][j][k] = Chxez.p[i][ihx][k] * dy;
-                    CPsi_hzy_yp.p[k][j][i] = Chzex.p[k][ihx][i] * dy;
                     Chxez.p[i][ihx][k] = Chxez.p[i][ihx][k] / kappa_my;
+                }
+            }
+            for (unsigned i = 0; i < Psi_hzy_yp.nz; i++) {
+                for (unsigned k = 0; k < Psi_hzy_yp.nx; k++) {
+                    CPsi_hzy_yp.p[k][j][i] = Chzex.p[k][ihx][i] * dy;
                     Chzex.p[k][ihx][i] = Chzex.p[k][ihx][i] / kappa_my;
                 }
             }
@@ -901,30 +932,37 @@ void cpml<type1>::initCoefficientArraysZN(short pmlOrder, type1 sigmaRatio, type
             type1 rho_e_pmlOrder = pow(rho_e, pmlOrder);
             type1 rho_m_pmlOrder = pow(rho_m, pmlOrder);
             type1 sigma_pez = sigmaMax*rho_e_pmlOrder;
-            type1 sigma_pmz = sigmaMax * rho_m_pmlOrder*Mu0DivEps0;
+            type1 sigma_pmz = sigmaMax * rho_m_pmlOrder;
             type1 kappa_ez = 1 + (kappaMax - 1) * rho_e_pmlOrder;
             type1 kappa_mz = 1 + (kappaMax - 1) * rho_m_pmlOrder;
             type1 alpha_ez = alphaMax * (rho_e);
-            type1 alpha_mz = alphaMax * (rho_m) * Mu0DivEps0;
+            type1 alpha_mz = alphaMax * (rho_m);
             cpml_b_ez_zn.p[k] = exp((-dt / eps_0) * (sigma_pez / kappa_ez + alpha_ez));
-            cpml_b_mz_zn.p[k] = exp((-dt / mu_0) * (sigma_pmz / kappa_mz + alpha_mz));
+            cpml_b_mz_zn.p[k] = exp((-dt / eps_0) * (sigma_pmz / kappa_mz + alpha_mz));
             cpml_a_ez_zn.p[k] = 1 / dz * (cpml_b_ez_zn.p[k] - 1.0) * sigma_pez / (kappa_ez * (sigma_pez + kappa_ez * alpha_ez));
             cpml_a_mz_zn.p[k] = 1 / dz * (cpml_b_mz_zn.p[k] - 1.0) * sigma_pmz / (kappa_mz * (sigma_pmz + kappa_mz * alpha_mz));
 
             for (unsigned j = 0; j < Psi_exz_zn.ny; j++) {
                 for (unsigned i = 0; i < Psi_exz_zn.nx; i++) {
-                    // TODO fix region size
                     CPsi_exz_zn.p[i][j][k] = Cexhy.p[i][j][iplus] * dz;
-                    CPsi_eyz_zn.p[j][i][k] = Ceyhx.p[j][i][iplus] * dz;
                     Cexhy.p[i][j][iplus] = Cexhy.p[i][j][iplus] / kappa_ez;
+                }
+            }
+            for (unsigned j = 0; j < Psi_eyz_zn.nx; j++) {
+                for (unsigned i = 0; i < Psi_eyz_zn.ny; i++) {
+                    CPsi_eyz_zn.p[j][i][k] = Ceyhx.p[j][i][iplus] * dz;
                     Ceyhx.p[j][i][iplus] = Ceyhx.p[j][i][iplus] / kappa_ez;
                 }
             }
             for (unsigned j = 0; j < Psi_hxz_zn.ny; j++) {
                 for (unsigned i = 0; i < Psi_hxz_zn.nx; i++) {
                     CPsi_hxz_zn.p[i][j][k] = Chxey.p[i][j][k] * dz;
-                    CPsi_hyz_zn.p[j][i][k] = Chyex.p[j][i][k] * dz;
                     Chxey.p[i][j][k] = Chxey.p[i][j][k] / kappa_mz;
+                }
+            }
+            for (unsigned j = 0; j < Psi_hyz_zn.nx; j++) {
+                for (unsigned i = 0; i < Psi_hyz_zn.ny; i++) {
+                    CPsi_hyz_zn.p[j][i][k] = Chyex.p[j][i][k] * dz;
                     Chyex.p[j][i][k] = Chyex.p[j][i][k] / kappa_mz;
                 }
             }
@@ -945,30 +983,37 @@ void cpml<type1>::initCoefficientArraysZP(short pmlOrder, type1 sigmaRatio, type
             type1 rho_e_pmlOrder = pow(rho_e, pmlOrder);
             type1 rho_m_pmlOrder = pow(rho_m, pmlOrder);
             type1 sigma_pez = sigmaMax*rho_e_pmlOrder;
-            type1 sigma_pmz = sigmaMax * rho_m_pmlOrder*Mu0DivEps0;
+            type1 sigma_pmz = sigmaMax * rho_m_pmlOrder;
             type1 kappa_ez = 1 + (kappaMax - 1) * rho_e_pmlOrder;
             type1 kappa_mz = 1 + (kappaMax - 1) * rho_m_pmlOrder;
             type1 alpha_ez = alphaMax * (rho_e);
-            type1 alpha_mz = alphaMax * (rho_m) * Mu0DivEps0;
+            type1 alpha_mz = alphaMax * (rho_m);
             cpml_b_ez_zp.p[k] = exp((-dt / eps_0) * (sigma_pez / kappa_ez + alpha_ez));
-            cpml_b_mz_zp.p[k] = exp((-dt / mu_0) * (sigma_pmz / kappa_mz + alpha_mz));
+            cpml_b_mz_zp.p[k] = exp((-dt / eps_0) * (sigma_pmz / kappa_mz + alpha_mz));
             cpml_a_ez_zp.p[k] = 1 / dz * (cpml_b_ez_zp.p[k] - 1.0) * sigma_pez / (kappa_ez * (sigma_pez + kappa_ez * alpha_ez));
             cpml_a_mz_zp.p[k] = 1 / dz * (cpml_b_mz_zp.p[k] - 1.0) * sigma_pmz / (kappa_mz * (sigma_pmz + kappa_mz * alpha_mz));
 
             for (unsigned j = 0; j < Psi_eyz_zp.ny; j++) {
                 for (unsigned i = 0; i < Psi_eyz_zp.nx; i++) {
-                    // TODO fix region size
                     CPsi_eyz_zp.p[i][j][k] = Ceyhx.p[i][j][iez] * dz;
-                    CPsi_exz_zp.p[j][i][k] = Cexhy.p[j][i][iez] * dz;
                     Ceyhx.p[i][j][iez] = Ceyhx.p[i][j][iez] / kappa_ez;
+                }
+            }
+            for (unsigned j = 0; j < Psi_exz_zp.nx; j++) {
+                for (unsigned i = 0; i < Psi_exz_zp.ny; i++) {
+                    CPsi_exz_zp.p[j][i][k] = Cexhy.p[j][i][iez] * dz;
                     Cexhy.p[j][i][iez] = Cexhy.p[j][i][iez] / kappa_ez;
                 }
             }
             for (unsigned j = 0; j < Psi_hyz_zp.ny; j++) {
                 for (unsigned i = 0; i < Psi_hyz_zp.nx; i++) {
                     CPsi_hyz_zp.p[i][j][k] = Chyex.p[i][j][ihz] * dz;
-                    CPsi_hxz_zp.p[j][i][k] = Chxey.p[j][i][ihz] * dz;
                     Chyex.p[i][j][ihz] = Chyex.p[i][j][ihz] / kappa_mz;
+                }
+            }
+            for (unsigned j = 0; j < Psi_hxz_zp.nx; j++) {
+                for (unsigned i = 0; i < Psi_hxz_zp.ny; i++) {
+                    CPsi_hxz_zp.p[j][i][k] = Chxey.p[j][i][ihz] * dz;
                     Chxey.p[j][i][ihz] = Chxey.p[j][i][ihz] / kappa_mz;
                 }
             }
