@@ -530,6 +530,12 @@ void fdtd::initialize() {
     Hz.CreateStruct(Imax, Jmax, Kmax + 1, 0);
 
     //coefficients
+    Cexe.CreateStruct(Ex, 0.0);
+    Ceye.CreateStruct(Ey, 0.0);
+    Ceze.CreateStruct(Ez, 0.0);
+    Chxh.CreateStruct(Hx, 0.0);
+    Chyh.CreateStruct(Hy, 0.0);
+    Chzh.CreateStruct(Hz, 0.0);
     Cexhy.CreateStruct(Ex, 0.0);
     Cexhz.CreateStruct(Ex, 0.0);
     Chxey.CreateStruct(Hx, 0.0);
@@ -549,7 +555,7 @@ void fdtd::initialize() {
     Hz.setName("Hz");
     Hx.setName("Hx");
     Hy.setName("Hy");
-    initCoeficients();
+
 #ifdef WITH_DENSITY
     Vz.setName("Vz");
     Vx.setName("Vx");
@@ -603,7 +609,7 @@ void fdtd::setUp() {
 
     //delay
     if (srcType == fdtd::SOURCE_GAUSSIAN) {
-        t0 = 1.0 * tw;
+        t0 = 3.0 * tw;
     }
     //    t0 = 6e-9;
 #ifdef WITH_DENSITY
@@ -662,23 +668,23 @@ void fdtd::setUp() {
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     DA = 1.0;
     DB = dt / mu_0;
-
+    initCoeficients();
     for (i = 0; i < numMaterials; ++i) {
 
         CA[i] = (1.0 - sigma[i] * dt / (2.0 * epsilon[i])) /
                 (1.0 + sigma[i] * dt / (2.0 * epsilon[i]));
         CB[i] = (dt / (epsilon[i])) /
                 (1.0 + sigma[i] * dt / (2.0 * epsilon[i]));
-
     }
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     //  PML parameters
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    MyDataF sigmaRatio = 1.0;
-    MyDataF kappaMax = 13;
-    MyDataF alphaMax = 4;
+    MyDataF sigmaRatio = 0.75/sqrt(mu_0/eps_0/epsR);
+    MyDataF kappaMax = 10;
+    MyDataF alphaMax = 0.025;
     int pmlOrder = 4;
+
     //pml.initParmeters(dx, dy, dz, m, ma);
     pml.setCPMLRegion(pmlWidth);
     pml.createCPMLArrays(Imax, Jmax, Kmax);
@@ -785,7 +791,7 @@ void fdtd::updateSource(unsigned n) {
         default:
             source = 0;
     }
-    Ez.p[isp][jsp][ksp] = Ez.p[isp][jsp][ksp] + CB[ID3.p[isp][jsp][ksp]] * source / dx / dy / dz;
+    Ez.p[isp][jsp][ksp] = Ez.p[isp][jsp][ksp] + CB[0] * source / dx / dy / dz;
     //cout<<"source="<<source<<"\t"<<amp<<"\t"<<n<<"\t"<<dt<<"\t"<<
     //        amp * -2.0 * ((n * dt - t0) / tw / tw) * exp(-pow(((n * dt - t0) / tw), 2))<<endl;
 
@@ -978,8 +984,8 @@ void fdtd::updateHx() {
     for (k = 0; k < Kmax; ++k) {
         for (i = 0; i < Imax + 1; ++i) {
             for (j = 0; j < Jmax; ++j) {
-                Hx.p[i][j][k] = Chxh.p[i][j][k] * Hx.p[i][j][k] + Chxez.p[i][j][k]*(Ez.p[i][j][k] - Ez.p[i][j + 1][k]) +
-                        Chxey.p[i][j][k]*(Ey.p[i][j][k] - Ey.p[i][j][k - 1]);
+                Hx.p[i][j][k] = Chxh.p[i][j][k] * Hx.p[i][j][k] + Chxez.p[i][j][k]*(Ez.p[i][j + 1][k] - Ez.p[i][j][k]) +
+                        Chxey.p[i][j][k]*(Ey.p[i][j][k + 1] - Ey.p[i][j][k]);
 #ifdef WITH_DENSITY
 #if (DEBUG>=4&&!_OPENMP)
                 Hx.nanOperator(i, j, k);
@@ -998,8 +1004,8 @@ void fdtd::updateHy() {
     for (k = 0; k < Kmax; ++k) {
         for (i = 0; i < Imax; ++i) {
             for (j = 0; j < Jmax + 1; ++j) {
-                Hy.p[i][j][k] = Chyh.p[i][j][k] * Hy.p[i][j][k] + Chyez.p[i][j][k]*(Ez.p[i][j][k] - Ez.p[i + 1][j][k]) +
-                        Chyex.p[i][j][k]*(Ex.p[i][j][k] - Ex.p[i][j][k - 1]);
+                Hy.p[i][j][k] = Chyh.p[i][j][k] * Hy.p[i][j][k] + Chyez.p[i][j][k]*(Ez.p[i + 1][j][k] - Ez.p[i][j][k]) +
+                        Chyex.p[i][j][k]*(Ex.p[i][j][k + 1] - Ex.p[i][j][k]);
 #ifdef WITH_DENSITY
 #if (DEBUG>=4&&!_OPENMP)
                 Hy.nanOperator(i, j, k);
@@ -1022,8 +1028,8 @@ void fdtd::updateHz() {
         for (i = 0; i < Imax; ++i) {
             for (j = 0; j < Jmax; ++j) {
                 Hz.p[i][j][k] = Chzh.p[i][j][k] * Hz.p[i][j][k] + Chzey.p[i][j][k]
-                        * (Ey.p[i][j][k] - Ey.p[i + 1][j][k]) +
-                        (Ex.p[i][j + 1][k] - Ex.p[i][j][k]) * Chyex.p[i][j][k];
+                        * (Ey.p[i + 1][j][k] - Ey.p[i][j][k]) +
+                        (Ex.p[i][j + 1][k] - Ex.p[i][j][k]) * Chzex.p[i][j][k];
 #ifdef WITH_DENSITY
 #if (DEBUG>=4&&!_OPENMP)
                 Hz.nanOperator(i, j, k);
@@ -1058,7 +1064,7 @@ void fdtd::updateEx() {
 #else
                 Ex.p[i][j][k] = Cexe.p[i][j][k] * Ex.p[i][j][k] +
                         (Hz.p[i][j][k] - Hz.p[i][j - 1][k]) * Cexhz.p[i][j][k] +
-                        (Hy.p[i][j][k] - Hy.p[i][j][k + 1]) * Cexhy.p[i][j][k];
+                        (Hy.p[i][j][k] - Hy.p[i][j][k - 1]) * Cexhy.p[i][j][k];
 #endif                                  
 
 #ifdef WITH_DENSITY
@@ -1098,8 +1104,8 @@ void fdtd::updateEy() {
                         Ceyvy.p[i][j][k] * Vy.p[i][j][k];
 #else
                 Ey.p[i][j][k] = Ceye.p[i][j][k] * Ey.p[i][j][k] +
-                        (Hz.p[i - 1][j][k] - Hz.p[i][j][k]) * Ceyhz.p[i][j][k] +
-                        (Hx.p[i][j][k + 1] - Hx.p[i][j][k]) * Ceyhx.p[i][j][k];
+                        (Hz.p[i][j][k] - Hz.p[i - 1][j][k]) * Ceyhz.p[i][j][k] +
+                        (Hx.p[i][j][k] - Hx.p[i][j][k - 1]) * Ceyhx.p[i][j][k];
 #endif /* WITH_DENSITY */
 
 #ifdef WITH_DENSITY
@@ -1143,7 +1149,7 @@ void fdtd::updateEz() {
                         Cezvz.p[i][j][k] * Vz.p[i][j][k];
 #else
                 Ez.p[i][j][k] = Ceze.p[i][j][k] * Ez.p[i][j][k] + (Hy.p[i][j][k] - Hy.p[i - 1][j][k]) * Cezhy.p[i][j][k] +
-                        (Hx.p[i][j - 1][k] - Hx.p[i][j][k]) * Cezhx.p[i][j][k];
+                        (Hx.p[i][j][k] - Hx.p[i][j - 1][k]) * Cezhx.p[i][j][k];
 #endif
 
 #ifdef WITH_DENSITY
