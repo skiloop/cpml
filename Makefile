@@ -24,7 +24,7 @@ VPATH=doc:src:test
 ###########################
 ## targets
 ###########################
-TAGET=formulations.pdf
+TAGET=formulations.pdf fdtd-1d-cpml.pdf
 
 ###########################
 ## objects
@@ -37,7 +37,9 @@ OBJECTS=cpml.o inputChecker.o main.o fdtd.o
 ###########################
 .PHONY:all clean
 
-all: formulations.pdf main
+doc:formulations.pdf fdtd-1d-cpml.pdf
+
+all: doc main
 
 main:$(OBJECTS)
 	$(CXX) -o $@ $^
@@ -49,7 +51,7 @@ $(OBJECTS):%.o:%.cpp
 
 
 ## formulations
-formulations.pdf:formulations.tex
+%.pdf:%.tex
 	$(PDFLATEX) $<
 
 clean:
