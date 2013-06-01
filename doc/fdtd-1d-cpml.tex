@@ -9,15 +9,15 @@
 \section{Maxwell Eqations}
 Equations in frequancy domain
 \begin{equation}
-j\omega\epsilon E_{x}=-\frac{1}{s_{z}}\frac{\partial H_{y}}{\partial z}
+j\omega\varepsilon E_{x}=-\frac{1}{s_{z}}\frac{\partial H_{y}}{\partial z}
 \end{equation}
 \begin{equation}
 j\omega\mu H_{y}=\frac{1}{s_{z}}\frac{\partial E_{x}}{\partial z}
 \end{equation}
-where $s_z=1$ in non-PML region and $s_x=\kappa_z+\frac{\sigma_z}{\alpha_z+j\omega\epsilon_0}$ in PML region.
-Transform to time domain we get
+where $s_z=1$ in non-PML region and $s_x=\kappa_z+\frac{\sigma_z}{\alpha_z+j\omega\varepsilon_0}$ in PML region.
+Transform equations for PML to time domain we get
 \begin{equation}
-\frac{\partial( \epsilon E_{x})}{\partial t}+\sigma E_{x}=-\frac{1}{\kappa_{z}}\frac{\partial H_{y}}{\partial z}-\Psi_{Ezy}
+\frac{\partial( \varepsilon E_{x})}{\partial t}+\sigma E_{x}=-\frac{1}{\kappa_{z}}\frac{\partial H_{y}}{\partial z}-\Psi_{Ezy}
 \end{equation}
 \begin{equation}
 \frac{\partial( \mu H_{y})}{\partial t}+\sigma_{m} H_{y}=\frac{1}{\kappa_{z}}\frac{\partial E_{x}}{\partial z}+\Psi_{Hzx}
@@ -32,17 +32,17 @@ and
 \end{equation}
 where
 \begin{equation}
-\zeta_{z}(t)=-\frac{\sigma_z}{\epsilon_0\kappa^{2}_{z}}\exp\left(-\left(\frac{\sigma_z}{\epsilon_0\kappa_z}+\frac{\alpha_z}{\epsilon_0}\right)t\right)u(t)
+\zeta_{z}(t)=-\frac{\sigma_z}{\varepsilon_0\kappa^{2}_{z}}\exp\left(-\left(\frac{\sigma_z}{\varepsilon_0\kappa_z}+\frac{\alpha_z}{\varepsilon_0}\right)t\right)u(t)
 \end{equation}
 and $u(t)$ is the unit step function.
 
-\section{Discrete formula}
+\section{Discrete formula in PML region}
 %%=========================================
 %% electric dicrete equation
 %%=========================================
 \begin{equation}
 \begin{aligned}
-&\epsilon(k)\frac{E^{n+1}_{x}(k)-E^{n}_{x}(k)}{\Delta t}+\sigma(k)\frac{E^{n+1}_{x}(k)+E^{n}_{x}(k)}{2}=\\
+&\varepsilon(k)\frac{E^{n+1}_{x}(k)-E^{n}_{x}(k)}{\Delta t}+\sigma(k)\frac{E^{n+1}_{x}(k)+E^{n}_{x}(k)}{2}=\\
 &-\frac{1}{\kappa_z(k)}\frac{H^{n+1/2}_{y}(k+1/2)-H^{n+1/2}_{y}(k-1/2)}{\Delta z}-\Psi_{Ezy}^{n+1/2}(k)
 \end{aligned}
 \end{equation}
@@ -57,13 +57,13 @@ where
 C_{a}(k)=\frac{1-b}{1+b}
 \end{equation}
 \begin{equation}
-C_{c}(k)=-\frac{\Delta t}{(1+b)\epsilon(k)}
+C_{c}(k)=-\frac{\Delta t}{(1+b)\varepsilon(k)}
 \end{equation}
 \begin{equation}
 C_{b}(k)=\frac{C_{c}}{\kappa(k)\Delta z}
 \end{equation}
 \begin{equation}
-b=\frac{\sigma(k)\Delta t}{2\epsilon(k)}
+b=\frac{\sigma(k)\Delta t}{2\varepsilon(k)}
 \end{equation}
 
 %%=========================================
@@ -74,7 +74,7 @@ Magnetic
 \begin{aligned}
 &\mu(k)\frac{H^{n+1/2}_{y}(k+1/2)-H^{n+1/2}_{y}(k+1/2)}{\Delta t}\\
 &+\sigma_m(k)\frac{H^{n+1/2}_{x}(k)+H^{n-1/2}_{x}(k+1/2)}{2}=\\
-&\frac{1}{\kappa_z(k)}\frac{E^{n}_{x}(k+1)-E^{n}_{x}(k)}{\Delta z}-\Psi_{Hzx}^{n+1/2}(k+1/2)
+&\frac{1}{\kappa_z(k)}\frac{E^{n}_{x}(k+1)-E^{n}_{x}(k)}{\Delta z}+\Psi_{Hzx}^{n+1/2}(k+1/2)
 \end{aligned}
 \end{equation}
 \begin{equation}
@@ -92,6 +92,62 @@ C_{3}(k)=\frac{\Delta t}{(1+b)\mu(k)}
 \end{equation}
 \begin{equation}
 C_{2}(k)=\frac{C_{3}}{\kappa(k)\Delta z}
+\end{equation}
+\begin{equation}
+b=\frac{\sigma_m(k)\Delta t}{2\mu(k)}
+\end{equation}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Discrete formula in non-PML region}
+%%=========================================
+%% electric dicrete equation
+%%=========================================
+\begin{equation}
+\begin{aligned}
+&\varepsilon(k)\frac{E^{n+1}_{x}(k)-E^{n}_{x}(k)}{\Delta t}+\sigma(k)\frac{E^{n+1}_{x}(k)+E^{n}_{x}(k)}{2}=\\
+&-\frac{H^{n+1/2}_{y}(k+1/2)-H^{n+1/2}_{y}(k-1/2)}{\Delta z}
+\end{aligned}
+\end{equation}
+\begin{equation}
+\begin{aligned}
+&E^{n+1}_{x}(k)=C_{a}(k)E^{n}_{x}(k)\\
+&+C_{b}(k)\left(H^{n+1/2}_{y}(k+1/2)-H^{n+1/2}_{y}(k-1/2)\right)
+\end{aligned}
+\end{equation}
+where 
+\begin{equation}
+C_{a}(k)=\frac{1-b}{1+b}
+\end{equation}
+\begin{equation}
+C_{b}(k)=-\frac{\Delta t}{(1+b)\varepsilon(k)\Delta z}
+\end{equation}
+\begin{equation}
+b=\frac{\sigma(k)\Delta t}{2\varepsilon(k)}
+\end{equation}
+
+%%=========================================
+%% magnetic dicrete equation nonPML
+%%=========================================
+Magnetic
+\begin{equation}
+\begin{aligned}
+&\mu(k)\frac{H^{n+1/2}_{y}(k+1/2)-H^{n+1/2}_{y}(k+1/2)}{\Delta t}\\
+&+\sigma_m(k)\frac{H^{n+1/2}_{x}(k)+H^{n-1/2}_{x}(k+1/2)}{2}=\\
+&\frac{E^{n}_{x}(k+1)-E^{n}_{x}(k)}{\Delta z}
+\end{aligned}
+\end{equation}
+\begin{equation}
+\begin{aligned}
+&H^{n+1/2}_{y}(k+1/2)=C_{1}(k+1/2)H^{n-1/2}_{y}(k+1/2)\\
+&+C_{2}(k+1/2)\left(E^{n}_{x}(k+1)-E^{n}_{x}(k)\right)
+\end{aligned}
+\end{equation}
+where 
+\begin{equation}
+C_{1}(k)=\frac{1-b}{1+b}
+\end{equation}
+\begin{equation}
+C_{2}(k)=\frac{\Delta t}{(1+b)\mu(k)\Delta z}
 \end{equation}
 \begin{equation}
 b=\frac{\sigma_m(k)\Delta t}{2\mu(k)}
