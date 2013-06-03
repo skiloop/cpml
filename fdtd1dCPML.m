@@ -20,18 +20,20 @@ frequency=110E9;
 T=1/frequency;
 lambda=C*T;
 t0=4*T;
+omega=2*pi*frequency;
 
 %% FDTD variables
-domainLength=10*lambda;
+domainLength=4*lambda;
 totalTime=20*T;
-numberCellsPerWavelength=100;
+numberCellsPerWavelength=200;
 
 %% CPML parameters
 pmlWidth=10;
 pmlOrder=4;
 epsR=1;
-kappaMax=8;
-alphaMax=0.05;
+sigmaMax=1;
+kappaMax=15;
+alphaMax=0.24;
 alphaOrder=1;
 
 %% domain definition
@@ -47,118 +49,143 @@ Ex=zeros(1,nzp1);
 Hy=zeros(1,nz);
 
 %% Coeficient for EM field updating
-Ce1=1;
-Ce2=-dt/eps_0/dz;
-Ch1=1;
-Ch2=-dt/mu_0/dz;
+Cexe=1;
+Cexhy=-dt/eps_0/dz;
+Chyh=1;
+Chyex=-dt/mu_0/dz;
 
 %% CPML arrays
-Psi_Ezy_left=zeros(1,pmlWidth);
-Psi_Ezy_right=zeros(1,pmlWidth);
-Psi_Hzx_left=zeros(1,pmlWidth);
-Psi_Hzx_right=zeros(1,pmlWidth);
+Psi_Ezy_zn=zeros(1,pmlWidth);
+Psi_Ezy_zp=zeros(1,pmlWidth);
+Psi_Hzx_zn=zeros(1,pmlWidth);
+Psi_Hzx_zp=zeros(1,pmlWidth);
 
 %% initial PML update coeficients
-sigmaMax=(pmlOrder+1)/(sqrt(epsR)*150*pi*dz);
-% left side
+sigmaOpt=sigmaMax*(pmlOrder+1)/(sqrt(epsR)*150*pi*dz);
+% zn side
 rho_e=((pmlWidth:-1:1)-0.75)/pmlWidth;
 rho_m=((pmlWidth:-1:1)-0.25)/pmlWidth;
-sigma_e=sigmaMax*abs(rho_e).^pmlOrder;
-sigma_m=(mu_0/eps_0)*sigmaMax*abs(rho_m).^pmlOrder;
+sigma_e=sigmaOpt*abs(rho_e).^pmlOrder;
+sigma_m=sigmaOpt*abs(rho_m).^pmlOrder;
 kappa_e=1+(kappaMax-1)*abs(rho_e).^pmlOrder;
 kappa_m=1+(kappaMax-1)*abs(rho_m).^pmlOrder;
 alpha_e=alphaMax*abs(rho_e).^pmlOrder;
-alpha_m=(mu_0/eps_0)*alphaMax*abs(rho_m).^pmlOrder;
+alpha_m=alphaMax*abs(rho_m).^pmlOrder;
 cpml_b_e_n=exp((-dt/eps_0)...
     *((sigma_e./kappa_e)+alpha_e));
 cpml_a_e_n=1/dz*(cpml_b_e_n-1).*sigma_e ...
-    .*(kappa_e.*(sigma_e+kappa_e.*alpha_e));
-cpml_b_m_n=exp((-dt/mu_0)...
+    ./(kappa_e.*(sigma_e+kappa_e.*alpha_e));
+cpml_b_m_n=exp((-dt/eps_0)...
     *((sigma_m./kappa_m)+alpha_m));
 cpml_a_m_n=1/dz*(cpml_b_m_n-1).*sigma_m ...
-    .*(kappa_m.*(sigma_m+kappa_m.*alpha_m));
-b=  sigma_e*dt/2/eps_0;
-ca_left=(1-b)./(1+b);
-cc_left=-dt./(1+b)/eps_0;
-cb_left=cc_left./kappa_e/dz;
-b=  sigma_m*dt/2/mu_0;
-c1_left=(1-b)./(1+b);
-c3_left=-dt./(1+b)/mu_0;
-c2_left=c3_left./kappa_m/dz;
-% right side
+    ./(kappa_m.*(sigma_m+kappa_m.*alpha_m));
+b=0;%sigma_e*dt/2/eps_0;
+Cexe_zn=(1-b)./(1+b);
+CPsi_Ezy_zn=-dt./(1+b)/eps_0;
+Cexhy_zn=CPsi_Ezy_zn./kappa_e/dz;
+b=0;%sigma_m*dt/2/mu_0;
+Chyh_zn=(1-b)./(1+b);
+CPsi_Hzx_zn=-dt./(1+b)/mu_0;
+Chyex_zn=CPsi_Hzx_zn./kappa_m/dz;
+% zp side
 rho_e=((1:1:pmlWidth)-0.75)/pmlWidth;
 rho_m=((1:1:pmlWidth)-0.25)/pmlWidth;
-sigma_e=sigmaMax*abs(rho_e).^pmlOrder;
-sigma_m=(mu_0/eps_0)*sigmaMax*abs(rho_m).^pmlOrder;
+sigma_e=sigmaOpt*abs(rho_e).^pmlOrder;
+sigma_m=sigmaOpt*abs(rho_m).^pmlOrder;
 kappa_e=1+(kappaMax-1)*abs(rho_e).^pmlOrder;
 kappa_m=1+(kappaMax-1)*abs(rho_m).^pmlOrder;
 alpha_e=alphaMax*abs(rho_e).^pmlOrder;
-alpha_m=(mu_0/eps_0)*alphaMax*abs(rho_m).^pmlOrder;
+alpha_m=alphaMax*abs(rho_m).^pmlOrder;
 cpml_b_e_p=exp((-dt/eps_0)...
     *((sigma_e./kappa_e)+alpha_e));
-cpml_a_e_p=1/dz*(cpml_b_e_n-1).*sigma_e ...
-    .*(kappa_e.*(sigma_e+kappa_e.*alpha_e));
-cpml_b_m_p=exp((-dt/mu_0)...
+cpml_a_e_p=1/dz*(cpml_b_e_p-1).*sigma_e ...
+    ./(kappa_e.*(sigma_e+kappa_e.*alpha_e));
+cpml_b_m_p=exp((-dt/eps_0)...
     *((sigma_m./kappa_m)+alpha_m));
 cpml_a_m_p=1/dz*(cpml_b_m_p-1).*sigma_m ...
-    .*(kappa_m.*(sigma_m+kappa_m.*alpha_m));
-b=  sigma_e*dt/2/eps_0;
-ca_right=(1-b)./(1+b);
-cc_right=-dt./(1+b)/eps_0;
-cb_right=cc_right./kappa_e/dz;
-b=  sigma_m*dt/2/mu_0;
-c1_right=(1-b)./(1+b);
-c3_right=-dt./(1+b)/mu_0;
-c2_right=c3_right./kappa_m/dz;
+    ./(kappa_m.*(sigma_m+kappa_m.*alpha_m));
+b=0;%sigma_e*dt/2/eps_0;
+Cexe_zp=(1-b)./(1+b);
+CPsi_Ezy_zp=-dt./(1+b)/eps_0;
+Cexhy_zp=CPsi_Ezy_zp./kappa_e/dz;
+b=0;%sigma_m*dt/2/mu_0;
+Chyh_zp=(1-b)./(1+b);
+CPsi_Hzx_zp=-dt./(1+b)/mu_0;
+Chyex_zp=CPsi_Hzx_zp./kappa_m/dz;
 
 %% FDTD loop
 
 % some constants
+%====== Gaussian Source ===========
 dtDivEps0DivDz=dt/eps_0/dz;
-muSource=dtDivEps0DivDz*amptidute * -2.0 / T/T;
+muSource=dtDivEps0DivDz*amptidute * -2.0 /T/T;
+%====== Sine Source ===========
+% dtDivEps0DivDz=dt/eps_0/dz;
+% muSource=dtDivEps0DivDz*amptidute * 2.0*pi*omega;
 
 % initial plot
 figure;
 h=plot(Ex);
-set(gca,'ylim',[-2.5 3]*1e15);
+%set(gca,'ylim',[-2 2.5]*1e15);
+set(gca,'xlim',[pmlWidth (nz-pmlWidth)]);
 grid on;
 
 % point to test performace of CPML
-ic=ksource+floor((nzp1-ksource)/2);
-cEx=zeros(1,totalTime);
+ic=ksource+numberCellsPerWavelength;
+cEx=zeros(1,totalTimeStep);
 
 % fdtd loop
 for n=1:totalTimeStep
     %============================
     %update Hy
     %============================
-    Psi_Hzx_left=cpml_b_m_n.*Psi_Hzx_left+cpml_b_m_n.*(Ex(2:pmlWidth+1)-Ex(1:pmlWidth));
-    Psi_Hzx_right=cpml_b_m_p.*Psi_Hzx_right+cpml_b_m_p.*(Ex(nzp1-pmlWidth+1:nzp1)-Ex(nzp1-pmlWidth:nz));
-    Hy(1:pmlWidth)=c1_left.*Hy(1:pmlWidth)+c2_left.*(Ex(2:pmlWidth+1)-Ex(1:pmlWidth))+c3_left.*Psi_Hzx_left;
-    Hy(nz-pmlWidth+1:nz)=c1_right.*Hy(nz-pmlWidth+1:nz)+c2_right.*(Ex(nzp1-pmlWidth+1:nzp1)-Ex(nzp1-pmlWidth:nz))+c3_right.*Psi_Hzx_right;
+    Psi_Hzx_zn=cpml_b_m_n.*Psi_Hzx_zn+cpml_a_m_n.*(Ex(2:pmlWidth+1)-Ex(1:pmlWidth));
+    Psi_Hzx_zp=cpml_b_m_p.*Psi_Hzx_zp+cpml_a_m_p.*(Ex(nzp1-pmlWidth+1:nzp1)-Ex(nzp1-pmlWidth:nz));
+    if sum(isnan(Psi_Hzx_zp))>0
+        display('nan found');
+    end
+    Hy(1:pmlWidth)=Chyh_zn.*Hy(1:pmlWidth)+Chyex_zn.*(Ex(2:pmlWidth+1)-Ex(1:pmlWidth))+CPsi_Hzx_zn.*Psi_Hzx_zn;
+    if sum(isnan(Hy))>0
+        display('nan found');
+    end
+    Hy(nz-pmlWidth+1:nz)=Chyh_zp.*Hy(nz-pmlWidth+1:nz)+Chyex_zp.*(Ex(nzp1-pmlWidth+1:nzp1)-Ex(nzp1-pmlWidth:nz))+CPsi_Hzx_zp.*Psi_Hzx_zp;
+    if sum(isnan(Hy))>0
+        display('nan found');
+    end
     % non pml region
-    Hy(pmlWidth+1:nz-pmlWidth)=Ch1* Hy(pmlWidth+1:nz-pmlWidth)+Ch2*( Ex(pmlWidth+2:nzp1-pmlWidth)-Ex(pmlWidth+1:nz-pmlWidth)); 
+    Hy(pmlWidth+1:nz-pmlWidth)=Chyh* Hy(pmlWidth+1:nz-pmlWidth)+Chyex*( Ex(pmlWidth+2:nzp1-pmlWidth)-Ex(pmlWidth+1:nz-pmlWidth)); 
     
     %===========================
     % update Ex
     %===========================
-    Psi_Ezy_left=cpml_b_e_n.*Psi_Ezy_left+cpml_b_e_n.*(Hy(2:pmlWidth+1)-Hy(1:pmlWidth));
-    Psi_Ezy_right=cpml_b_e_p.*Psi_Ezy_right+cpml_b_e_p.*(Hy(nzp1-pmlWidth:nz)-Hy(nz-pmlWidth:nzm1));
-    Ex(2:pmlWidth+1)=ca_left.*Ex(2:pmlWidth+1)+cb_left.*(Hy(2:pmlWidth+1)-Hy(1:pmlWidth))+cc_left.*Psi_Ezy_left;
-    Ex(nzp1-pmlWidth:nz)=ca_right.*Ex(nzp1-pmlWidth:nz)+cb_right.*(Hy(nzp1-pmlWidth:nz)-Hy(nz-pmlWidth:nzm1))+cc_right.*Psi_Ezy_right;
+    Psi_Ezy_zn=cpml_b_e_n.*Psi_Ezy_zn+cpml_a_e_n.*(Hy(2:pmlWidth+1)-Hy(1:pmlWidth));
+    Psi_Ezy_zp=cpml_b_e_p.*Psi_Ezy_zp+cpml_a_e_p.*(Hy(nzp1-pmlWidth:nz)-Hy(nz-pmlWidth:nzm1));
+    if sum(isnan(Psi_Ezy_zp))>0
+        display('nan found');
+    end
+    Ex(2:pmlWidth+1)=Cexe_zn.*Ex(2:pmlWidth+1)+Cexhy_zn.*(Hy(2:pmlWidth+1)-Hy(1:pmlWidth))+CPsi_Ezy_zn.*Psi_Ezy_zn;
+    
+    if sum(isnan(Ex))>0
+        display('nan found');
+    end
+    Ex(nzp1-pmlWidth:nz)=Cexe_zp.*Ex(nzp1-pmlWidth:nz)+Cexhy_zp.*(Hy(nzp1-pmlWidth:nz)-Hy(nz-pmlWidth:nzm1))+CPsi_Ezy_zp.*Psi_Ezy_zp;
+    if sum(isnan(Ex))>0
+        display('nan found');
+    end
     % non pml region
-    Ex(pmlWidth+2:nzp1-pmlWidth)=Ce1* Ex(pmlWidth+2:nzp1-pmlWidth)+Ce2*( Hy(pmlWidth+2:nzp1-pmlWidth)-Hy(pmlWidth+1:nz-pmlWidth)); 
+    Ex(pmlWidth+2:nz-pmlWidth)=Cexe* Ex(pmlWidth+2:nz-pmlWidth)+Cexhy*( Hy(pmlWidth+2:nz-pmlWidth)-Hy(pmlWidth+1:nzm1-pmlWidth)); 
     
     %==========================
     % update source
     %==========================
     Ex(ksource)=Ex(ksource)+muSource* ((n * dt - t0) ) ...
                     * exp(-(((n * dt - t0) / T).^2)); % Differentiated Gaussian pulse
+%     Ex(ksource)=Ex(ksource)-amptidute *sin((n * dt - t0) * omega)/dz; % Sine source
                 
     %==========================
     % update figure
     %==========================
-    if mod(n,10)==0
+    if mod(n,30)==0||n==totalTimeStep
         set(h,'YData',Ex);
         title(gca,strcat('time step :' ,int2str(n)));
         pause(0.2);
@@ -171,11 +198,13 @@ for n=1:totalTimeStep
     
 end
 
-%% display performance of CPML
+% %% display performance of CPML
 % caculate analysis solve
 t=(1:totalTimeStep)*dt;
-delay=(ic-ksource)*dz/C;
-aEx=muSource* ((t - t0-delay) ).*exp(-(((t - t0-delay) / T).^2));
+% delay=(ic-ksource)*dz/C;
+% aEx=muSource* ((t - t0-delay) ).*exp(-(((t - t0-delay) / T).^2));
+load analysis cex
+aEx=cex;
 relativeError=abs(cEx-aEx)/max(abs(aEx));
 dbError=20*log10(relativeError);
 
@@ -200,6 +229,4 @@ xlabel('time (ns)');
 ylabel('Error (DB)');
 grid on;
 title('DB Error');
-
-
 
