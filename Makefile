@@ -12,8 +12,13 @@ PDFLATEX=pdflatex
 ###########################
 ## base compiler options
 ###########################
-CFLAGS		=-Wall -g
-CXXFLAGS	=-Wall -g
+CFLAGS		=-Wall -g -fopenmp
+CXXFLAGS	=-Wall -g -fopenmp
+
+###########################
+## link options
+###########################
+LIB=-lm -fopenmp
 
 ###########################
 ## virtual path
@@ -29,7 +34,7 @@ TAGET=formulations.pdf fdtd-1d-cpml.pdf
 ###########################
 ## objects
 ###########################
-OBJECTS=cpml.o inputChecker.o main.o fdtd.o
+OBJECTS=cpml.o main.o fdtd.o 
 
 
 ###########################
@@ -37,12 +42,12 @@ OBJECTS=cpml.o inputChecker.o main.o fdtd.o
 ###########################
 .PHONY:all clean
 
+all: doc main
 doc:formulations.pdf fdtd-1d-cpml.pdf
 
-all: doc main
 
 main:$(OBJECTS)
-	$(CXX) -o $@ $^
+	$(CXX) -o $@ $^ $(LIB)
 
 
 
@@ -55,4 +60,4 @@ $(OBJECTS):%.o:%.cpp
 	$(PDFLATEX) $<
 
 clean:
-	-rm -f $(TAGET) $(OBJECTS) *.log *.aux
+	-rm -f $(TAGET) $(OBJECTS) *.log *.aux main
