@@ -25,3 +25,5 @@
 # ide project files and directory
 nbproject/
 
+# target
+main
