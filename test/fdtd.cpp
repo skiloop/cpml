@@ -94,7 +94,8 @@ void fdtd::setUp() {
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     //  COMPUTING FIELD UPDATE EQUATION COEFFICIENTS
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
+    initCoeficients();
+    
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     //  PML parameters
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -172,7 +173,7 @@ void fdtd::updateSource(unsigned n) {
     source = amp * -2.0 * ((n * dt - t0) / tw / tw)
             * exp(-pow(((n * dt - t0) / tw), 2)); //Differentiated Gaussian pulse
 
-    Ez.p[isp][jsp][ksp] = Ez.p[isp][jsp][ksp] +dt/eps_0 * source / dx / dy / dz;
+    Ez.p[isp][jsp][ksp] = Ez.p[isp][jsp][ksp] + dt / eps_0 * source / dx / dy / dz;
     //cout<<"source="<<source<<"\t"<<amp<<"\t"<<n<<"\t"<<dt<<"\t"<<
     //        amp * -2.0 * ((n * dt - t0) / tw / tw) * exp(-pow(((n * dt - t0) / tw), 2))<<endl;
 
