@@ -6,7 +6,6 @@
 %
 
 clc
-clear;
 close all;
 
 %% some constants
@@ -23,12 +22,24 @@ t0=4*T;
 omega=2*pi*frequency;
 
 %% FDTD variables
-domainLength=4*lambda;
-totalTime=20*T;
+if exist('zZoneSize','var')==0
+    zZoneSize=4;
+else if zZoneSize<0
+    zZoneSize=4;
+    end
+end
+if exist('tZoneSize','var')==0
+    tZoneSize=4;
+else if zZoneSize<0
+    tZoneSize=4;
+    end
+end
+domainLength=zZoneSize*lambda;
+totalTime=tZoneSize*T;
 numberCellsPerWavelength=200;
 
 %% CPML parameters
-pmlWidth=10;
+pmlWidth=40;
 pmlOrder=4;
 epsR=1;
 sigmaMax=1;
@@ -178,7 +189,7 @@ for n=1:totalTimeStep
     %==========================
     % update source
     %==========================
-    Ex(ksource)=Ex(ksource)+muSource* ((n * dt - t0) ) ...
+    Ex(ksource)=Ex(ksource)+muSource *(n * dt - t0)...
                     * exp(-(((n * dt - t0) / T).^2)); % Differentiated Gaussian pulse
 %     Ex(ksource)=Ex(ksource)-amptidute *sin((n * dt - t0) * omega)/dz; % Sine source
                 
@@ -194,39 +205,5 @@ for n=1:totalTimeStep
     %=========================
     % sample watched field
     %=========================
-    cEx(n)=Ex(ic);
-    
+    cEx(n)=Ex(ic);    
 end
-
-% %% display performance of CPML
-% caculate analysis solve
-t=(1:totalTimeStep)*dt;
-% delay=(ic-ksource)*dz/C;
-% aEx=muSource* ((t - t0-delay) ).*exp(-(((t - t0-delay) / T).^2));
-load analysis cex
-aEx=cex;
-relativeError=abs(cEx-aEx)/max(abs(aEx));
-dbError=20*log10(relativeError);
-
-figure('NumberTitle','OFF','Name','Time Macthing');
-plot(t/1e-9,aEx,t/1e-9,cEx,'LineWidth',2);
-xlabel('time (ns)');
-ylabel('Ez');
-grid on;
-title('time domain compare');
-legend('analysis','cpml');
-
-figure('NumberTitle','OFF','Name','Relative Error');
-semilogy(t/1e-9,relativeError,'LineWidth',2);
-xlabel('time (ns)');
-ylabel('Relative Error');
-grid on;
-title('Relative Error');
-    
-figure('NumberTitle','OFF','Name','DB Error');
-plot(t/1e-9,dbError,'LineWidth',2);
-xlabel('time (ns)');
-ylabel('Error (DB)');
-grid on;
-title('DB Error');
-
