@@ -22,6 +22,11 @@ const double M_PI_TWO = M_PI * 2;
 #endif
 const double Mu0DivEps0 = mu_0 / eps_0;
 
+#ifdef _OPENMP
+#include <omp.h>
+extern int thread_count;
+#endif
+
 /***************************************************************
  * FDTD region 
  * Field    |    x     |    y    |   z
@@ -1356,13 +1361,21 @@ template<class T>
 void cpml<T>::updateEFieldCPML_x(data3d<T>& Ey, data3d<T>& Ez) {
     // x negetive region
     if (is_cpml_xn) {
-        for (unsigned i = 0, iplus = 1; i < n_cpml_xn; i++, iplus++) {
-            for (unsigned j = 0; j < Ey.ny; j++) {
+#ifdef _OPENMP
+#pragma omp parallel for num_threads(thread_count) schedule(dynamic) //shared(Hz,Ey,Ex,pml,DA,DB,dx,dy)
+#endif
+        for (unsigned j = 0; j < Ey.ny; j++) {
+            for (unsigned i = 0, iplus = 1; i < n_cpml_xn; i++, iplus++) {
                 for (unsigned k = 0; k < Ey.nz; k++) {
                     Ey.p[iplus][j][k] += CPsi_eyx_xn.p[i][j][k] * Psi_eyx_xn.p[i][j][k];
                 }
             }
-            for (unsigned j = 0; j < Ez.ny; j++) {
+        }
+#ifdef _OPENMP
+#pragma omp parallel for num_threads(thread_count) schedule(dynamic) //shared(Hz,Ey,Ex,pml,DA,DB,dx,dy)
+#endif
+        for (unsigned j = 0; j < Ez.ny; j++) {
+            for (unsigned i = 0, iplus = 1; i < n_cpml_xn; i++, iplus++) {
                 for (unsigned k = 0; k < Ez.nz; k++) {
                     Ez.p[iplus][j][k] += CPsi_ezx_xn.p[i][j][k] * Psi_ezx_xn.p[i][j][k];
                 }
@@ -1371,21 +1384,25 @@ void cpml<T>::updateEFieldCPML_x(data3d<T>& Ey, data3d<T>& Ez) {
     }
     // x positive region
     if (is_cpml_xp) {
-        unsigned ihz = Ez.nx - n_cpml_xp - 1;
-        unsigned ihy = Ey.nx - n_cpml_xp - 1;
-        for (unsigned i = 0; i < n_cpml_xp; i++) {
-            for (unsigned j = 0; j < Ey.ny; j++) {
+#ifdef _OPENMP
+#pragma omp parallel for num_threads(thread_count) schedule(dynamic) //shared(Hz,Ey,Ex,pml,DA,DB,dx,dy)
+#endif
+        for (unsigned j = 0; j < Ey.ny; j++) {
+            for (unsigned i = 0, ihy = Ey.nx - n_cpml_xp - 1; i < n_cpml_xp; i++, ihy++) {
                 for (unsigned k = 0; k < Ey.nz; k++) {
                     Ey.p[ihy][j][k] += CPsi_eyx_xp.p[i][j][k] * Psi_eyx_xp.p[i][j][k];
                 }
             }
-            for (unsigned j = 0; j < Ez.ny; j++) {
+        }
+#ifdef _OPENMP
+#pragma omp parallel for num_threads(thread_count) schedule(dynamic) //shared(Hz,Ey,Ex,pml,DA,DB,dx,dy)
+#endif
+        for (unsigned j = 0; j < Ez.ny; j++) {
+            for (unsigned i = 0, ihz = Ez.nx - n_cpml_xp - 1; i < n_cpml_xp; i++, ihz++) {
                 for (unsigned k = 0; k < Ez.nz; k++) {
                     Ez.p[ihz][j][k] += CPsi_ezx_xp.p[i][j][k] * Psi_ezx_xp.p[i][j][k];
                 }
             }
-            ihy++;
-            ihz++;
         }
     }
 }
@@ -1394,13 +1411,21 @@ template<class T>
 void cpml<T>::updateEFieldCPML_y(data3d<T>& Ex, data3d<T>& Ez) {
     // x negetive region
     if (is_cpml_yn) {
-        for (unsigned j = 0, jplus = 1; j < n_cpml_yn; j++, jplus++) {
-            for (unsigned i = 0; i < Ex.nx; i++) {
+#ifdef _OPENMP
+#pragma omp parallel for num_threads(thread_count) schedule(dynamic) //shared(Hz,Ey,Ex,pml,DA,DB,dx,dy)
+#endif
+        for (unsigned i = 0; i < Ex.nx; i++) {
+            for (unsigned j = 0, jplus = 1; j < n_cpml_yn; j++, jplus++) {
                 for (unsigned k = 0; k < Ex.nz; k++) {
                     Ex.p[i][jplus][k] += CPsi_exy_yn.p[i][j][k] * Psi_exy_yn.p[i][j][k];
                 }
             }
-            for (unsigned i = 0; i < Ez.nx; i++) {
+        }
+#ifdef _OPENMP
+#pragma omp parallel for num_threads(thread_count) schedule(dynamic) //shared(Hz,Ey,Ex,pml,DA,DB,dx,dy)
+#endif
+        for (unsigned i = 0; i < Ez.nx; i++) {
+            for (unsigned j = 0, jplus = 1; j < n_cpml_yn; j++, jplus++) {
                 for (unsigned k = 0; k < Ez.nz; k++) {
                     Ez.p[i][jplus][k] += CPsi_ezy_yn.p[i][j][k] * Psi_ezy_yn.p[i][j][k];
                 }
@@ -1409,21 +1434,25 @@ void cpml<T>::updateEFieldCPML_y(data3d<T>& Ex, data3d<T>& Ez) {
     }
     // x positive region
     if (is_cpml_yp) {
-        unsigned jhz = Ez.ny - n_cpml_yp - 1;
-        unsigned jhx = Ex.ny - n_cpml_yp - 1;
-        for (unsigned j = 0; j < n_cpml_yp; j++) {
-            for (unsigned i = 0; i < Ex.nx; i++) {
+#ifdef _OPENMP
+#pragma omp parallel for num_threads(thread_count) schedule(dynamic) //shared(Hz,Ey,Ex,pml,DA,DB,dx,dy)
+#endif
+        for (unsigned i = 0; i < Ex.nx; i++) {
+            for (unsigned j = 0, jhx = Ex.ny - n_cpml_yp - 1; j < n_cpml_yp; j++, jhx++) {
                 for (unsigned k = 0; k < Ex.nz; k++) {
                     Ex.p[i][jhx][k] += CPsi_exy_yp.p[i][j][k] * Psi_exy_yp.p[i][j][k];
                 }
             }
-            for (unsigned i = 0; i < Ez.nx; i++) {
+        }
+#ifdef _OPENMP
+#pragma omp parallel for num_threads(thread_count) schedule(dynamic) //shared(Hz,Ey,Ex,pml,DA,DB,dx,dy)
+#endif
+        for (unsigned i = 0; i < Ez.nx; i++) {
+            for (unsigned j = 0, jhz = Ez.ny - n_cpml_yp - 1; j < n_cpml_yp; j++, jhz++) {
                 for (unsigned k = 0; k < Ez.nz; k++) {
                     Ez.p[i][jhz][k] += CPsi_ezy_yp.p[i][j][k] * Psi_ezy_yp.p[i][j][k];
                 }
             }
-            jhz++;
-            jhx++;
         }
     }
 }
@@ -1432,13 +1461,22 @@ template<class T>
 void cpml<T>::updateEFieldCPML_z(data3d<T>& Ex, data3d<T>& Ey) {
     // x negetive region
     if (is_cpml_zn) {
-        for (unsigned k = 0, kplus = 1; k < n_cpml_zn; k++, kplus++) {
-            for (unsigned j = 0; j < Ey.ny; j++) {
+#ifdef _OPENMP
+#pragma omp parallel for num_threads(thread_count) schedule(dynamic) //shared(Hz,Ey,Ex,pml,DA,DB,dx,dy)
+#endif
+        for (unsigned j = 0; j < Ey.ny; j++) {
+            for (unsigned k = 0, kplus = 1; k < n_cpml_zn; k++, kplus++) {
+
                 for (unsigned i = 0; i < Ey.nx; i++) {
                     Ey.p[i][j][kplus] += CPsi_eyz_zn.p[i][j][k] * Psi_eyz_zn.p[i][j][k];
                 }
             }
-            for (unsigned j = 0; j < Ex.ny; j++) {
+        }
+#ifdef _OPENMP
+#pragma omp parallel for num_threads(thread_count) schedule(dynamic) //shared(Hz,Ey,Ex,pml,DA,DB,dx,dy)
+#endif
+        for (unsigned j = 0; j < Ex.ny; j++) {
+            for (unsigned k = 0, kplus = 1; k < n_cpml_zn; k++, kplus++) {
                 for (unsigned i = 0; i < Ex.nx; i++) {
                     Ex.p[i][j][kplus] += CPsi_exz_zn.p[i][j][k] * Psi_exz_zn.p[i][j][k];
                 }
@@ -1447,21 +1485,25 @@ void cpml<T>::updateEFieldCPML_z(data3d<T>& Ex, data3d<T>& Ey) {
     }
     // x positive region
     if (is_cpml_zp) {
-        unsigned khy = Ey.nz - n_cpml_zp - 1;
-        unsigned khx = Ex.nz - n_cpml_zp - 1;
-        for (unsigned k = 0; k < n_cpml_zp; k++) {
-            for (unsigned j = 0; j < Ey.ny; j++) {
+#ifdef _OPENMP
+#pragma omp parallel for num_threads(thread_count) schedule(dynamic) //shared(Hz,Ey,Ex,pml,DA,DB,dx,dy)
+#endif
+        for (unsigned j = 0; j < Ey.ny; j++) {
+            for (unsigned k = 0, khy = Ey.nz - n_cpml_zp - 1; k < n_cpml_zp; k++, khy++) {
                 for (unsigned i = 0; i < Ey.nx; i++) {
                     Ey.p[i][j][khy] += CPsi_eyz_zp.p[i][j][k] * Psi_eyz_zp.p[i][j][k];
                 }
             }
-            for (unsigned j = 0; j < Ex.ny; j++) {
+        }
+#ifdef _OPENMP
+#pragma omp parallel for num_threads(thread_count) schedule(dynamic) //shared(Hz,Ey,Ex,pml,DA,DB,dx,dy)
+#endif
+        for (unsigned j = 0; j < Ex.ny; j++) {
+            for (unsigned k = 0, khx = Ex.nz - n_cpml_zp - 1; k < n_cpml_zp; k++, khx++) {
                 for (unsigned i = 0; i < Ex.nx; i++) {
                     Ex.p[i][j][khx] += CPsi_exz_zp.p[i][j][k] * Psi_exz_zp.p[i][j][k];
                 }
             }
-            khx++;
-            khy++;
         }
     }
 }
@@ -1470,13 +1512,21 @@ template<class T>
 void cpml<T>::updateMFieldCPML_x(data3d<T>& Hy, data3d<T>& Hz) {
     // x negetive region
     if (is_cpml_xn) {
-        for (unsigned i = 0; i < n_cpml_xn; i++) {
-            for (unsigned j = 0; j < Hy.ny; j++) {
+#ifdef _OPENMP
+#pragma omp parallel for num_threads(thread_count) schedule(dynamic) //shared(Hz,Ey,Ex,pml,DA,DB,dx,dy)
+#endif
+        for (unsigned j = 0; j < Hy.ny; j++) {
+            for (unsigned i = 0; i < n_cpml_xn; i++) {
                 for (unsigned k = 0; k < Hy.nz; k++) {
                     Hy.p[i][j][k] += CPsi_hyx_xn.p[i][j][k] * Psi_hyx_xn.p[i][j][k];
                 }
             }
-            for (unsigned j = 0; j < Hz.ny; j++) {
+        }
+#ifdef _OPENMP
+#pragma omp parallel for num_threads(thread_count) schedule(dynamic) //shared(Hz,Ey,Ex,pml,DA,DB,dx,dy)
+#endif
+        for (unsigned j = 0; j < Hz.ny; j++) {
+            for (unsigned i = 0; i < n_cpml_xn; i++) {
                 for (unsigned k = 0; k < Hz.nz; k++) {
                     Hz.p[i][j][k] += CPsi_hzx_xn.p[i][j][k] * Psi_hzx_xn.p[i][j][k];
                 }
@@ -1485,21 +1535,25 @@ void cpml<T>::updateMFieldCPML_x(data3d<T>& Hy, data3d<T>& Hz) {
     }
     // x positive region
     if (is_cpml_xp) {
-        unsigned ihz = Hz.nx - n_cpml_xp;
-        unsigned ihy = Hy.nx - n_cpml_xp;
-        for (unsigned i = 0; i < n_cpml_xp; i++) {
-            for (unsigned j = 0; j < Hy.ny; j++) {
+#ifdef _OPENMP
+#pragma omp parallel for num_threads(thread_count) schedule(dynamic) //shared(Hz,Ey,Ex,pml,DA,DB,dx,dy)
+#endif
+        for (unsigned j = 0; j < Hy.ny; j++) {
+            for (unsigned i = 0, ihy = Hy.nx - n_cpml_xp; i < n_cpml_xp; i++, ihy++) {
                 for (unsigned k = 0; k < Hy.nz; k++) {
                     Hy.p[ihy][j][k] += CPsi_hyx_xp.p[i][j][k] * Psi_hyx_xp.p[i][j][k];
                 }
             }
-            for (unsigned j = 0; j < Hz.ny; j++) {
+        }
+#ifdef _OPENMP
+#pragma omp parallel for num_threads(thread_count) schedule(dynamic) //shared(Hz,Ey,Ex,pml,DA,DB,dx,dy)
+#endif
+        for (unsigned j = 0; j < Hz.ny; j++) {
+            for (unsigned i = 0, ihz = Hz.nx - n_cpml_xp; i < n_cpml_xp; i++, ihz++) {
                 for (unsigned k = 0; k < Hz.nz; k++) {
                     Hz.p[ihz][j][k] += CPsi_hzx_xp.p[i][j][k] * Psi_hzx_xp.p[i][j][k];
                 }
             }
-            ihy++;
-            ihz++;
         }
     }
 }
@@ -1508,13 +1562,21 @@ template<class T>
 void cpml<T>::updateMFieldCPML_y(data3d<T>& Hx, data3d<T>& Hz) {
     // x negetive region
     if (is_cpml_yn) {
-        for (unsigned j = 0; j < n_cpml_yn; j++) {
-            for (unsigned i = 0; i < Hx.nx; i++) {
+#ifdef _OPENMP
+#pragma omp parallel for num_threads(thread_count) schedule(dynamic) //shared(Hz,Ey,Ex,pml,DA,DB,dx,dy)
+#endif
+        for (unsigned i = 0; i < Hx.nx; i++) {
+            for (unsigned j = 0; j < n_cpml_yn; j++) {
                 for (unsigned k = 0; k < Hx.nz; k++) {
                     Hx.p[i][j][k] += CPsi_hxy_yn.p[i][j][k] * Psi_hxy_yn.p[i][j][k];
                 }
             }
-            for (unsigned i = 0; i < Hz.nx; i++) {
+        }
+#ifdef _OPENMP
+#pragma omp parallel for num_threads(thread_count) schedule(dynamic) //shared(Hz,Ey,Ex,pml,DA,DB,dx,dy)
+#endif
+        for (unsigned i = 0; i < Hz.nx; i++) {
+            for (unsigned j = 0; j < n_cpml_yn; j++) {
                 for (unsigned k = 0; k < Hz.nz; k++) {
                     Hz.p[i][j][k] += CPsi_hzy_yn.p[i][j][k] * Psi_hzy_yn.p[i][j][k];
                 }
@@ -1523,21 +1585,25 @@ void cpml<T>::updateMFieldCPML_y(data3d<T>& Hx, data3d<T>& Hz) {
     }
     // x positive region
     if (is_cpml_yp) {
-        unsigned ihx = Hx.ny - n_cpml_yp;
-        unsigned ihz = Hz.ny - n_cpml_yp;
-        for (unsigned j = 0; j < n_cpml_yp; j++) {
-            for (unsigned i = 0; i < Hx.nx; i++) {
+#ifdef _OPENMP
+#pragma omp parallel for num_threads(thread_count) schedule(dynamic) //shared(Hz,Ey,Ex,pml,DA,DB,dx,dy)
+#endif
+        for (unsigned i = 0; i < Hx.nx; i++) {
+            for (unsigned j = 0, ihx = Hx.ny - n_cpml_yp; j < n_cpml_yp; j++, ihx++) {
                 for (unsigned k = 0; k < Hx.nz; k++) {
                     Hx.p[i][ihx][k] += CPsi_hxy_yp.p[i][j][k] * Psi_hxy_yp.p[i][j][k];
                 }
             }
-            for (unsigned i = 0; i < Hz.nx; i++) {
+        }
+#ifdef _OPENMP
+#pragma omp parallel for num_threads(thread_count) schedule(dynamic) //shared(Hz,Ey,Ex,pml,DA,DB,dx,dy)
+#endif
+        for (unsigned i = 0; i < Hz.nx; i++) {
+            for (unsigned j = 0, ihz = Hz.ny - n_cpml_yp; j < n_cpml_yp; j++, ihz++) {
                 for (unsigned k = 0; k < Hz.nz; k++) {
                     Hz.p[i][ihz][k] += CPsi_hzy_yp.p[i][j][k] * Psi_hzy_yp.p[i][j][k];
                 }
             }
-            ihx++;
-            ihz++;
         }
     }
 }
@@ -1547,13 +1613,21 @@ void cpml<T>::updateMFieldCPML_z(data3d<T>& Hx, data3d<T>& Hy) {
     //TODO add update Hz in pml region
     // x negetive region
     if (is_cpml_zn) {
-        for (unsigned k = 0; k < n_cpml_zn; k++) {
-            for (unsigned j = 0; j < Hy.ny; j++) {
+#ifdef _OPENMP
+#pragma omp parallel for num_threads(thread_count) schedule(dynamic) //shared(Hz,Ey,Ex,pml,DA,DB,dx,dy)
+#endif
+        for (unsigned j = 0; j < Hy.ny; j++) {
+            for (unsigned k = 0; k < n_cpml_zn; k++) {
                 for (unsigned i = 0; i < Hy.nx; i++) {
                     Hy.p[i][j][k] += CPsi_hyz_zn.p[i][j][k] * Psi_hyz_zn.p[i][j][k];
                 }
             }
-            for (unsigned j = 0; j < Hx.ny; j++) {
+        }
+#ifdef _OPENMP
+#pragma omp parallel for num_threads(thread_count) schedule(dynamic) //shared(Hz,Ey,Ex,pml,DA,DB,dx,dy)
+#endif
+        for (unsigned j = 0; j < Hx.ny; j++) {
+            for (unsigned k = 0; k < n_cpml_zn; k++) {
                 for (unsigned i = 0; i < Hx.nx; i++) {
                     Hx.p[i][j][k] += CPsi_hxz_zn.p[i][j][k] * Psi_hxz_zn.p[i][j][k];
                 }
@@ -1562,29 +1636,36 @@ void cpml<T>::updateMFieldCPML_z(data3d<T>& Hx, data3d<T>& Hy) {
     }
     // x positive region
     if (is_cpml_zp) {
-        unsigned khx = Hx.nz - n_cpml_zp;
-        unsigned khy = Hy.nz - n_cpml_zp;
-        for (unsigned k = 0; k < n_cpml_zp; k++) {
-            for (unsigned i = 0; i < Hy.nx; i++) {
+#ifdef _OPENMP
+#pragma omp parallel for num_threads(thread_count) schedule(dynamic) //shared(Hz,Ey,Ex,pml,DA,DB,dx,dy)
+#endif
+        for (unsigned i = 0; i < Hy.nx; i++) {
+            for (unsigned k = 0, khy = Hy.nz - n_cpml_zp; k < n_cpml_zp; k++, khy++) {
                 for (unsigned j = 0; j < Hy.ny; j++) {
                     Hy.p[i][j][khy] += CPsi_hyz_zp.p[i][j][k] * Psi_hyz_zp.p[i][j][k];
                 }
             }
-            for (unsigned i = 0; i < Hx.nx; i++) {
+        }
+#ifdef _OPENMP
+#pragma omp parallel for num_threads(thread_count) schedule(dynamic) //shared(Hz,Ey,Ex,pml,DA,DB,dx,dy)
+#endif
+        for (unsigned i = 0; i < Hx.nx; i++) {
+            for (unsigned k = 0, khx = Hx.nz - n_cpml_zp; k < n_cpml_zp; k++, khx++) {
                 for (unsigned j = 0; j < Hx.ny; j++) {
                     Hx.p[i][j][khx] += CPsi_hxz_zp.p[i][j][k] * Psi_hxz_zp.p[i][j][k];
                 }
             }
-            khx++;
-            khy++;
         }
     }
 }
 
 template<class T>
 void cpml<T>::updatePsi_eyz_zp(const data3d<T>& Hx) {
-    for (unsigned k = 0, ikz = Hx.nz - n_cpml_zp; k < n_cpml_zp; k++, ikz++) {
-        for (unsigned i = 0; i < Psi_eyz_zp.nx; i++) {
+#ifdef _OPENMP
+#pragma omp parallel for num_threads(thread_count) schedule(dynamic) //shared(Hz,Ey,Ex,pml,DA,DB,dx,dy)
+#endif
+    for (unsigned i = 0; i < Psi_eyz_zp.nx; i++) {
+        for (unsigned k = 0, ikz = Hx.nz - n_cpml_zp; k < n_cpml_zp; k++, ikz++) {
             for (unsigned j = 0; j < Psi_eyz_zp.ny; j++) {
                 Psi_eyz_zp.p[i][j][k] = Psi_eyz_zp.p[i][j][k] * cpml_b_ez_zp.p[k] + cpml_a_ez_zp.p[k]*(Hx.p[i][j][ikz] - Hx.p[i][j][ikz - 1]);
             }
@@ -1594,8 +1675,11 @@ void cpml<T>::updatePsi_eyz_zp(const data3d<T>& Hx) {
 
 template<class T>
 void cpml<T>::updatePsi_ezy_yp(const data3d<T>& Hx) {
-    for (unsigned j = 0, jhy = Hx.ny - n_cpml_yp; j < n_cpml_yp; j++, jhy++) {
-        for (unsigned i = 0; i < Psi_ezy_yp.nx; i++) {
+#ifdef _OPENMP
+#pragma omp parallel for num_threads(thread_count) schedule(dynamic) //shared(Hz,Ey,Ex,pml,DA,DB,dx,dy)
+#endif
+    for (unsigned i = 0; i < Psi_ezy_yp.nx; i++) {
+        for (unsigned j = 0, jhy = Hx.ny - n_cpml_yp; j < n_cpml_yp; j++, jhy++) {
             for (unsigned k = 0; k < Psi_ezy_yp.nz; k++) {
                 Psi_ezy_yp.p[i][j][k] = Psi_ezy_yp.p[i][j][k] * cpml_b_ey_yp.p[j] + cpml_a_ey_yp.p[j]*(Hx.p[i][jhy][k] - Hx.p[i][jhy - 1][k]);
             }
@@ -1605,8 +1689,11 @@ void cpml<T>::updatePsi_ezy_yp(const data3d<T>& Hx) {
 
 template<class T>
 void cpml<T>::updatePsi_exz_zp(const data3d<T>& Hy) {
-    for (unsigned k = 0, iez = Hy.nz - n_cpml_zp; k < n_cpml_zp; k++, iez++) {
-        for (unsigned i = 0; i < Psi_exz_zp.nx; i++) {
+#ifdef _OPENMP
+#pragma omp parallel for num_threads(thread_count) schedule(dynamic) //shared(Hz,Ey,Ex,pml,DA,DB,dx,dy)
+#endif
+    for (unsigned i = 0; i < Psi_exz_zp.nx; i++) {
+        for (unsigned k = 0, iez = Hy.nz - n_cpml_zp; k < n_cpml_zp; k++, iez++) {
             for (unsigned j = 0; j < Psi_exz_zp.ny; j++) {
                 Psi_exz_zp.p[i][j][k] = cpml_b_ez_zp.p[k] * Psi_exz_zp.p[i][j][k] + cpml_a_ez_zp.p[k]*(Hy.p[i][j][iez ] - Hy.p[i][j][iez - 1]);
             }
@@ -1616,8 +1703,11 @@ void cpml<T>::updatePsi_exz_zp(const data3d<T>& Hy) {
 
 template<class T>
 void cpml<T>::updatePsi_ezx_xp(const data3d<T>& Hy) {
-    for (unsigned i = 0, iex = Hy.nx - n_cpml_xp; i < n_cpml_xp; i++, iex++) {
-        for (unsigned j = 0; j < Psi_ezx_xp.ny; j++) {
+#ifdef _OPENMP
+#pragma omp parallel for num_threads(thread_count) schedule(dynamic) //shared(Hz,Ey,Ex,pml,DA,DB,dx,dy)
+#endif
+    for (unsigned j = 0; j < Psi_ezx_xp.ny; j++) {
+        for (unsigned i = 0, iex = Hy.nx - n_cpml_xp; i < n_cpml_xp; i++, iex++) {
             for (unsigned k = 0; k < Psi_ezx_xp.nz; k++) {
                 Psi_ezx_xp.p[i][j][k] = cpml_b_ex_xp.p[i] * Psi_ezx_xp.p[i][j][k] + cpml_a_ex_xp.p[i]*(Hy.p[iex][j][k] - Hy.p[iex - 1][j][k]);
             }
@@ -1627,8 +1717,11 @@ void cpml<T>::updatePsi_ezx_xp(const data3d<T>& Hy) {
 
 template<class T>
 void cpml<T>::updatePsi_eyx_xp(const data3d<T>& Hz) {
-    for (unsigned i = 0, ihz = Hz.nx - n_cpml_xp; i < n_cpml_xp; i++, ihz++) {
-        for (unsigned j = 0; j < Psi_eyx_xp.ny; j++) {
+#ifdef _OPENMP
+#pragma omp parallel for num_threads(thread_count) schedule(dynamic) //shared(Hz,Ey,Ex,pml,DA,DB,dx,dy)
+#endif
+    for (unsigned j = 0; j < Psi_eyx_xp.ny; j++) {
+        for (unsigned i = 0, ihz = Hz.nx - n_cpml_xp; i < n_cpml_xp; i++, ihz++) {
             for (unsigned k = 0; k < Psi_eyx_xp.nz; k++) {
                 Psi_eyx_xp.p[i][j][k] = cpml_b_ex_xp.p[i] * Psi_eyx_xp.p[i][j][k] + cpml_a_ex_xp.p[i]*(Hz.p[ihz][j][k] - Hz.p[ihz - 1][j][k]);
             }
@@ -1638,8 +1731,11 @@ void cpml<T>::updatePsi_eyx_xp(const data3d<T>& Hz) {
 
 template<class T>
 void cpml<T>::updatePsi_exy_yp(const data3d<T>& Hz) {
-    for (unsigned j = 0, ihy = Hz.ny - n_cpml_yp; j < n_cpml_yp; j++, ihy++) {
-        for (unsigned i = 0; i < Psi_exy_yp.nx; i++) {
+#ifdef _OPENMP
+#pragma omp parallel for num_threads(thread_count) schedule(dynamic) //shared(Hz,Ey,Ex,pml,DA,DB,dx,dy)
+#endif
+    for (unsigned i = 0; i < Psi_exy_yp.nx; i++) {
+        for (unsigned j = 0, ihy = Hz.ny - n_cpml_yp; j < n_cpml_yp; j++, ihy++) {
             for (unsigned k = 0; k < Psi_exy_yp.nz; k++) {
                 Psi_exy_yp.p[i][j][k] = Psi_exy_yp.p[i][j][k] * cpml_b_ey_yp.p[j] + cpml_a_ey_yp.p[j]*(Hz.p[i][ihy][k] - Hz.p[i][ihy - 1][k]);
             }
@@ -1649,8 +1745,11 @@ void cpml<T>::updatePsi_exy_yp(const data3d<T>& Hz) {
 
 template<class T>
 void cpml<T>::updatePsi_hyz_zp(const data3d<T>& Ex) {
-    for (unsigned k = 0, ikz = Ex.nz - n_cpml_zp; k < n_cpml_zp; k++, ikz++) {
-        for (unsigned i = 0; i < Psi_hyz_zp.nx; i++) {
+#ifdef _OPENMP
+#pragma omp parallel for num_threads(thread_count) schedule(dynamic) //shared(Hz,Ey,Ex,pml,DA,DB,dx,dy)
+#endif
+    for (unsigned i = 0; i < Psi_hyz_zp.nx; i++) {
+        for (unsigned k = 0, ikz = Ex.nz - n_cpml_zp; k < n_cpml_zp; k++, ikz++) {
             for (unsigned j = 0; j < Psi_hyz_zp.ny; j++) {
                 Psi_hyz_zp.p[i][j][k] = Psi_hyz_zp.p[i][j][k] * cpml_b_mz_zp.p[k] + cpml_a_mz_zp.p[k]*(Ex.p[i][j][ikz] - Ex.p[i][j][ikz - 1]);
             }
@@ -1660,8 +1759,11 @@ void cpml<T>::updatePsi_hyz_zp(const data3d<T>& Ex) {
 
 template<class T>
 void cpml<T>::updatePsi_hzy_yp(const data3d<T>& Ex) {
-    for (unsigned j = 0, jhy = Ex.ny - n_cpml_yp; j < n_cpml_yp; j++, jhy++) {
-        for (unsigned i = 0; i < Psi_hzy_yp.nx; i++) {
+#ifdef _OPENMP
+#pragma omp parallel for num_threads(thread_count) schedule(dynamic) //shared(Hz,Ey,Ex,pml,DA,DB,dx,dy)
+#endif
+    for (unsigned i = 0; i < Psi_hzy_yp.nx; i++) {
+        for (unsigned j = 0, jhy = Ex.ny - n_cpml_yp; j < n_cpml_yp; j++, jhy++) {
             for (unsigned k = 0; k < Psi_hzy_yp.nz; k++) {
                 Psi_hzy_yp.p[i][j][k] = Psi_hzy_yp.p[i][j][k] * cpml_b_my_yp.p[j] + cpml_a_my_yp.p[j]*(Ex.p[i][jhy][k] - Ex.p[i][jhy - 1 ][k]);
             }
@@ -1671,8 +1773,11 @@ void cpml<T>::updatePsi_hzy_yp(const data3d<T>& Ex) {
 
 template<class T>
 void cpml<T>::updatePsi_hxz_zp(const data3d<T>& Ey) {
-    for (unsigned k = 0, khz = Ey.nz - n_cpml_zp; k < n_cpml_zp; k++, khz++) {
-        for (unsigned j = 0; j < Psi_hxz_zp.ny; j++) {
+#ifdef _OPENMP
+#pragma omp parallel for num_threads(thread_count) schedule(dynamic) //shared(Hz,Ey,Ex,pml,DA,DB,dx,dy)
+#endif
+    for (unsigned j = 0; j < Psi_hxz_zp.ny; j++) {
+        for (unsigned k = 0, khz = Ey.nz - n_cpml_zp; k < n_cpml_zp; k++, khz++) {
             for (unsigned i = 0; i < Psi_hxz_zp.nx; i++) {
                 Psi_hxz_zp.p[i][j][k] = Psi_hxz_zp.p[i][j][k] * cpml_b_mz_zp.p[k] + cpml_a_mz_zp.p[k]*(Ey.p[i][j][khz] - Ey.p[i][j][khz - 1]);
             }
@@ -1682,8 +1787,11 @@ void cpml<T>::updatePsi_hxz_zp(const data3d<T>& Ey) {
 
 template<class T>
 void cpml<T>::updatePsi_hzx_xp(const data3d<T>& Ey) {
-    for (unsigned i = 0, ihx = Ey.nx - n_cpml_xp; i < n_cpml_xp; i++, ihx++) {
-        for (unsigned j = 0; j < Psi_hzx_xp.ny; j++) {
+#ifdef _OPENMP
+#pragma omp parallel for num_threads(thread_count) schedule(dynamic) //shared(Hz,Ey,Ex,pml,DA,DB,dx,dy)
+#endif
+    for (unsigned j = 0; j < Psi_hzx_xp.ny; j++) {
+        for (unsigned i = 0, ihx = Ey.nx - n_cpml_xp; i < n_cpml_xp; i++, ihx++) {
             for (unsigned k = 0; k < Psi_hzx_xp.nz; k++) {
                 Psi_hzx_xp.p[i][j][k] = Psi_hzx_xp.p[i][j][k] * cpml_b_mx_xp.p[i] + cpml_a_mx_xp.p[i]*(Ey.p[ihx][j][k] - Ey.p[ihx - 1][j][k]);
             }
@@ -1693,8 +1801,11 @@ void cpml<T>::updatePsi_hzx_xp(const data3d<T>& Ey) {
 
 template<class T>
 void cpml<T>::updatePsi_hyx_xp(const data3d<T>& Ez) {
-    for (unsigned i = 0, ihx = Ez.nx - n_cpml_xp; i < n_cpml_xp; i++, ihx++) {
-        for (unsigned j = 0; j < Psi_hyx_xp.ny; j++) {
+#ifdef _OPENMP
+#pragma omp parallel for num_threads(thread_count) schedule(dynamic) //shared(Hz,Ey,Ex,pml,DA,DB,dx,dy)
+#endif
+    for (unsigned j = 0; j < Psi_hyx_xp.ny; j++) {
+        for (unsigned i = 0, ihx = Ez.nx - n_cpml_xp; i < n_cpml_xp; i++, ihx++) {
             for (unsigned k = 0; k < Psi_hyx_xp.nz; k++) {
                 Psi_hyx_xp.p[i][j][k] = Psi_hyx_xp.p[i][j][k] * cpml_b_mx_xp.p[i] + cpml_a_mx_xp.p[i]*(Ez.p[ihx][j][k] - Ez.p[ihx - 1 ][j][k]);
             }
@@ -1704,8 +1815,11 @@ void cpml<T>::updatePsi_hyx_xp(const data3d<T>& Ez) {
 
 template<class T>
 void cpml<T>::updatePsi_hxy_yp(const data3d<T>& Ez) {
-    for (unsigned j = 0, jhy = Ez.ny - n_cpml_yp; j < n_cpml_yp; j++, jhy++) {
-        for (unsigned i = 0; i < Psi_hxy_yp.nx; i++) {
+#ifdef _OPENMP
+#pragma omp parallel for num_threads(thread_count) schedule(dynamic) //shared(Hz,Ey,Ex,pml,DA,DB,dx,dy)
+#endif
+    for (unsigned i = 0; i < Psi_hxy_yp.nx; i++) {
+        for (unsigned j = 0, jhy = Ez.ny - n_cpml_yp; j < n_cpml_yp; j++, jhy++) {
             for (unsigned k = 0; k < Psi_hxy_yp.nz; k++) {
                 Psi_hxy_yp.p[i][j][k] = Psi_hxy_yp.p[i][j][k] * cpml_b_my_yp.p[j] + cpml_a_my_yp.p[j]*(Ez.p[i][jhy][k] - Ez.p[i][jhy - 1][k]);
             }
@@ -1715,8 +1829,11 @@ void cpml<T>::updatePsi_hxy_yp(const data3d<T>& Ez) {
 
 template<class T>
 void cpml<T>::updatePsi_eyz_zn(const data3d<T>& Hx) {
-    for (unsigned k = 0, kplus = 1; k < n_cpml_zn; k++, kplus++) {
-        for (unsigned i = 0; i < Psi_eyz_zn.nx; i++) {
+#ifdef _OPENMP
+#pragma omp parallel for num_threads(thread_count) schedule(dynamic) //shared(Hz,Ey,Ex,pml,DA,DB,dx,dy)
+#endif
+    for (unsigned i = 0; i < Psi_eyz_zn.nx; i++) {
+        for (unsigned k = 0, kplus = 1; k < n_cpml_zn; k++, kplus++) {
             for (unsigned j = 0; j < Psi_eyz_zn.ny; j++) {
                 Psi_eyz_zn.p[i][j][k] = cpml_b_ez_zn.p[k] * Psi_eyz_zn.p[i][j][k] + cpml_a_ez_zn.p[k]*(Hx.p[i][j][kplus] - Hx.p[i][j][k]);
             }
@@ -1726,8 +1843,11 @@ void cpml<T>::updatePsi_eyz_zn(const data3d<T>& Hx) {
 
 template<class T>
 void cpml<T>::updatePsi_ezy_yn(const data3d<T>& Hx) {
-    for (unsigned j = 0, jplus = 1; j < n_cpml_yn; j++, jplus++) {
-        for (unsigned i = 0; i < Psi_ezy_yn.nx; i++) {
+#ifdef _OPENMP
+#pragma omp parallel for num_threads(thread_count) schedule(dynamic) //shared(Hz,Ey,Ex,pml,DA,DB,dx,dy)
+#endif
+    for (unsigned i = 0; i < Psi_ezy_yn.nx; i++) {
+        for (unsigned j = 0, jplus = 1; j < n_cpml_yn; j++, jplus++) {
             for (unsigned k = 0; k < Psi_ezy_yn.nz; k++) {
                 Psi_ezy_yn.p[i][j][k] = cpml_b_ey_yn.p[j] * Psi_ezy_yn.p[i][j][k] + cpml_a_ey_yn.p[j]*(Hx.p[i][jplus][k] - Hx.p[i][j][k]);
             }
@@ -1737,8 +1857,11 @@ void cpml<T>::updatePsi_ezy_yn(const data3d<T>& Hx) {
 
 template<class T>
 void cpml<T>::updatePsi_exz_zn(const data3d<T>& Hy) {
-    for (unsigned k = 0, kplus = 1; k < n_cpml_zn; k++, kplus++) {
-        for (unsigned i = 0; i < Psi_exz_zn.nx; i++) {
+#ifdef _OPENMP
+#pragma omp parallel for num_threads(thread_count) schedule(dynamic) //shared(Hz,Ey,Ex,pml,DA,DB,dx,dy)
+#endif
+    for (unsigned i = 0; i < Psi_exz_zn.nx; i++) {
+        for (unsigned k = 0, kplus = 1; k < n_cpml_zn; k++, kplus++) {
             for (unsigned j = 0; j < Psi_exz_zn.ny; j++) {
                 Psi_exz_zn.p[i][j][k] = cpml_b_ez_zn.p[k] * Psi_exz_zn.p[i][j][k] + cpml_a_ez_zn.p[k]*(Hy.p[i][j][kplus] - Hy.p[i][j][k]);
             }
@@ -1748,8 +1871,11 @@ void cpml<T>::updatePsi_exz_zn(const data3d<T>& Hy) {
 
 template<class T>
 void cpml<T>::updatePsi_ezx_xn(const data3d<T>& Hy) {
-    for (unsigned i = 0, iplus = 1; i < n_cpml_xn; i++, iplus++) {
-        for (unsigned j = 0; j < Psi_ezx_xn.ny; j++) {
+#ifdef _OPENMP
+#pragma omp parallel for num_threads(thread_count) schedule(dynamic) //shared(Hz,Ey,Ex,pml,DA,DB,dx,dy)
+#endif
+    for (unsigned j = 0; j < Psi_ezx_xn.ny; j++) {
+        for (unsigned i = 0, iplus = 1; i < n_cpml_xn; i++, iplus++) {
             for (unsigned k = 0; k < Psi_ezx_xn.nz; k++) {
                 Psi_ezx_xn.p[i][j][k] = cpml_b_ex_xn.p[i] * Psi_ezx_xn.p[i][j][k] + cpml_a_ex_xn.p[i]*(Hy.p[iplus][j][k] - Hy.p[i][j][k]);
             }
@@ -1759,8 +1885,11 @@ void cpml<T>::updatePsi_ezx_xn(const data3d<T>& Hy) {
 
 template<class T>
 void cpml<T>::updatePsi_eyx_xn(const data3d<T>& Hz) {
-    for (unsigned i = 0, iplus = 1; i < n_cpml_xn; i++, iplus++) {
-        for (unsigned j = 0; j < Psi_eyx_xn.ny; j++) {
+#ifdef _OPENMP
+#pragma omp parallel for num_threads(thread_count) schedule(dynamic) //shared(Hz,Ey,Ex,pml,DA,DB,dx,dy)
+#endif
+    for (unsigned j = 0; j < Psi_eyx_xn.ny; j++) {
+        for (unsigned i = 0, iplus = 1; i < n_cpml_xn; i++, iplus++) {
             for (unsigned k = 0; k < Psi_eyx_xn.nz; k++) {
                 Psi_eyx_xn.p[i][j][k] = cpml_b_ex_xn.p[i] * Psi_eyx_xn.p[i][j][k] + cpml_a_ex_xn.p[i]*(Hz.p[iplus][j][k] - Hz.p[i][j][k]);
             }
@@ -1770,8 +1899,11 @@ void cpml<T>::updatePsi_eyx_xn(const data3d<T>& Hz) {
 
 template<class T>
 void cpml<T>::updatePsi_exy_yn(const data3d<T>& Hz) {
-    for (unsigned j = 0, jplus = 1; j < n_cpml_yn; j++, jplus++) {
-        for (unsigned k = 0; k < Psi_exy_yn.nz; k++) {
+#ifdef _OPENMP
+#pragma omp parallel for num_threads(thread_count) schedule(dynamic) //shared(Hz,Ey,Ex,pml,DA,DB,dx,dy)
+#endif
+    for (unsigned k = 0; k < Psi_exy_yn.nz; k++) {
+        for (unsigned j = 0, jplus = 1; j < n_cpml_yn; j++, jplus++) {
             for (unsigned i = 0; i < Psi_exy_yn.ny; i++) {
                 Psi_exy_yn.p[i][j][k] = cpml_b_ey_yn.p[j] * Psi_exy_yn.p[i][j][k] + cpml_a_ey_yn.p[j]*(Hz.p[i][jplus][k] - Hz.p[i][j][k]);
             }
@@ -1781,8 +1913,11 @@ void cpml<T>::updatePsi_exy_yn(const data3d<T>& Hz) {
 
 template<class T>
 void cpml<T>::updatePsi_hyz_zn(const data3d<T>& Ex) {
-    for (unsigned k = 0, kplus = 1; k < n_cpml_zn; k++, kplus++) {
-        for (unsigned j = 0; j < Psi_hyz_zn.ny; j++) {
+#ifdef _OPENMP
+#pragma omp parallel for num_threads(thread_count) schedule(dynamic) //shared(Hz,Ey,Ex,pml,DA,DB,dx,dy)
+#endif
+    for (unsigned j = 0; j < Psi_hyz_zn.ny; j++) {
+        for (unsigned k = 0, kplus = 1; k < n_cpml_zn; k++, kplus++) {
             for (unsigned i = 0; i < Psi_hyz_zn.nx; i++) {
                 Psi_hyz_zn.p[i][j][k] = cpml_b_mz_zn.p[k] * Psi_hyz_zn.p[i][j][k] + cpml_a_mz_zn.p[k]*(Ex.p[i][j][kplus] - Ex.p[i][j][k]);
             }
@@ -1792,8 +1927,11 @@ void cpml<T>::updatePsi_hyz_zn(const data3d<T>& Ex) {
 
 template<class T>
 void cpml<T>::updatePsi_hzy_yn(const data3d<T>& Ex) {
-    for (unsigned j = 0, jplus = 1; j < n_cpml_yn; j++, jplus++) {
-        for (unsigned i = 0; i < Psi_hzy_yn.nx; i++) {
+#ifdef _OPENMP
+#pragma omp parallel for num_threads(thread_count) schedule(dynamic) //shared(Hz,Ey,Ex,pml,DA,DB,dx,dy)
+#endif
+    for (unsigned i = 0; i < Psi_hzy_yn.nx; i++) {
+        for (unsigned j = 0, jplus = 1; j < n_cpml_yn; j++, jplus++) {
             for (unsigned k = 0; k < Psi_hzy_yn.nz; k++) {
                 Psi_hzy_yn.p[i][j][k] = cpml_b_my_yn.p[j] * Psi_hzy_yn.p[i][j][k] + cpml_a_my_yn.p[j]*(Ex.p[i][jplus][k] - Ex.p[i][j][k]);
             }
@@ -1803,8 +1941,11 @@ void cpml<T>::updatePsi_hzy_yn(const data3d<T>& Ex) {
 
 template<class T>
 void cpml<T>::updatePsi_hxz_zn(const data3d<T>& Ey) {
-    for (unsigned k = 0, kplus = 1; k < n_cpml_zn; k++, kplus++) {
-        for (unsigned i = 0; i < Psi_hxz_zn.nx; i++) {
+#ifdef _OPENMP
+#pragma omp parallel for num_threads(thread_count) schedule(dynamic) //shared(Hz,Ey,Ex,pml,DA,DB,dx,dy)
+#endif
+    for (unsigned i = 0; i < Psi_hxz_zn.nx; i++) {
+        for (unsigned k = 0, kplus = 1; k < n_cpml_zn; k++, kplus++) {
             for (unsigned j = 0; j < Psi_hxz_zn.ny; j++) {
                 Psi_hxz_zn.p[i][j][k] = cpml_b_mz_zn.p[k] * Psi_hxz_zn.p[i][j][k] + cpml_a_mz_zn.p[k]*(Ey.p[i][j][kplus] - Ey.p[i][j][k]);
             }
@@ -1814,8 +1955,11 @@ void cpml<T>::updatePsi_hxz_zn(const data3d<T>& Ey) {
 
 template<class T>
 void cpml<T>::updatePsi_hzx_xn(const data3d<T>& Ey) {
-    for (unsigned i = 0, iplus = 1; i < n_cpml_xn; i++, iplus++) {
-        for (unsigned j = 0; j < Psi_hzx_xn.ny; j++) {
+#ifdef _OPENMP
+#pragma omp parallel for num_threads(thread_count) schedule(dynamic) //shared(Hz,Ey,Ex,pml,DA,DB,dx,dy)
+#endif
+    for (unsigned j = 0; j < Psi_hzx_xn.ny; j++) {
+        for (unsigned i = 0, iplus = 1; i < n_cpml_xn; i++, iplus++) {
             for (unsigned k = 0; k < Psi_hzx_xn.nz; k++) {
                 Psi_hzx_xn.p[i][j][k] = Psi_hzx_xn.p[i][j][k] * cpml_b_mx_xn.p[i] + cpml_a_mx_xn.p[i]*(Ey.p[iplus][j][k] - Ey.p[i][j][k]);
             }
@@ -1825,8 +1969,11 @@ void cpml<T>::updatePsi_hzx_xn(const data3d<T>& Ey) {
 
 template<class T>
 void cpml<T>::updatePsi_hyx_xn(const data3d<T>& Ez) {
-    for (unsigned i = 0, iplus = 1; i < n_cpml_xn; i++, iplus++) {
-        for (unsigned j = 0; j < Psi_hyx_xn.ny; j++) {
+#ifdef _OPENMP
+#pragma omp parallel for num_threads(thread_count) schedule(dynamic) //shared(Hz,Ey,Ex,pml,DA,DB,dx,dy)
+#endif
+    for (unsigned j = 0; j < Psi_hyx_xn.ny; j++) {
+        for (unsigned i = 0, iplus = 1; i < n_cpml_xn; i++, iplus++) {
             for (unsigned k = 0; k < Psi_hyx_xn.nz; k++) {
                 Psi_hyx_xn.p[i][j][k] = Psi_hyx_xn.p[i][j][k] * cpml_b_mx_xn.p[i] + cpml_a_mx_xn.p[i]*(Ez.p[iplus][j][k] - Ez.p[i][j][k]);
             }
@@ -1836,8 +1983,11 @@ void cpml<T>::updatePsi_hyx_xn(const data3d<T>& Ez) {
 
 template<class T>
 void cpml<T>::updatePsi_hxy_yn(const data3d<T>& Ez) {
-    for (unsigned j = 0, jplus = 1; j < n_cpml_yn; j++, jplus++) {
-        for (unsigned i = 0; i < Psi_hxy_yn.nx; i++) {
+#ifdef _OPENMP
+#pragma omp parallel for num_threads(thread_count) schedule(dynamic) //shared(Hz,Ey,Ex,pml,DA,DB,dx,dy)
+#endif
+    for (unsigned i = 0; i < Psi_hxy_yn.nx; i++) {
+        for (unsigned j = 0, jplus = 1; j < n_cpml_yn; j++, jplus++) {
             for (unsigned k = 0; k < Psi_hxy_yn.nz; k++) {
                 Psi_hxy_yn.p[i][j][k] = Psi_hxy_yn.p[i][j][k] * cpml_b_my_yn.p[j] + cpml_a_my_yn.p[j]*(Ez.p[i][jplus][k] - Ez.p[i][j][k]);
             }
