@@ -6,14 +6,14 @@ clear;
 %% reference computing
 zZoneSize=60;
 tZoneSize=30;
-fdtd1dCPMLv4;
+fdtd1dCPML;
 aEx=cEx;
 save refRes aEx;
 
 %% reflect computing
 zZoneSize=10;
 tZoneSize=30;
-fdtd1dCPMLv4;
+fdtd1dCPML;
 
 %% performance analysis
 t=(1:totalTimeStep)*dt;
