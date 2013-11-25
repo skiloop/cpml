@@ -1,5 +1,6 @@
 #pragma once
 
+#include "common.h"
 #include "../src/cpml.h"
 
 #ifndef WITH_DENSITY

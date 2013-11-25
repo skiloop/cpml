@@ -12,8 +12,8 @@ PDFLATEX=pdflatex
 ###########################
 ## base compiler options
 ###########################
-CFLAGS		=-Wall -g #-fopenmp
-CXXFLAGS	=-Wall -g #-fopenmp
+CFLAGS		=-Wall -g -Wno-sign-compare#-fopenmp
+CXXFLAGS	=-Wall -g -Wno-sign-compare#-fopenmp
 
 ###########################
 ## link options

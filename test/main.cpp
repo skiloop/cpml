@@ -6,6 +6,7 @@
 int thread_count = 2; // thread count for openmp
 #endif
 
+#include "common.h"
 #include "fdtd.h"
 
 MyDataF epsR;
