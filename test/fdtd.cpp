@@ -15,6 +15,7 @@
 extern int thread_count;
 #endif
 
+#include "common.h"
 #include "../src/cpml.h"
 #include "fdtd.h"
 
@@ -39,33 +40,33 @@ fdtd::~fdtd(void) {
 
 void fdtd::initialize() {
 
-    Ez.CreateStruct(Imax + 1, Jmax + 1, Kmax, 0);
-    Ey.CreateStruct(Imax + 1, Jmax, Kmax + 1, 0);
-    Ex.CreateStruct(Imax, Jmax + 1, Kmax + 1, 0);
+    Ez.create3DArray(Imax + 1, Jmax + 1, Kmax, 0);
+    Ey.create3DArray(Imax + 1, Jmax, Kmax + 1, 0);
+    Ex.create3DArray(Imax, Jmax + 1, Kmax + 1, 0);
 
-    Hx.CreateStruct(Imax + 1, Jmax, Kmax, 0);
-    Hy.CreateStruct(Imax, Jmax + 1, Kmax, 0);
-    Hz.CreateStruct(Imax, Jmax, Kmax + 1, 0);
+    Hx.create3DArray(Imax + 1, Jmax, Kmax, 0);
+    Hy.create3DArray(Imax, Jmax + 1, Kmax, 0);
+    Hz.create3DArray(Imax, Jmax, Kmax + 1, 0);
 
     //coefficients
-    Cexe.CreateStruct(Ex, 0.0);
-    Ceye.CreateStruct(Ey, 0.0);
-    Ceze.CreateStruct(Ez, 0.0);
-    Chxh.CreateStruct(Hx, 0.0);
-    Chyh.CreateStruct(Hy, 0.0);
-    Chzh.CreateStruct(Hz, 0.0);
-    Cexhy.CreateStruct(Ex, 0.0);
-    Cexhz.CreateStruct(Ex, 0.0);
-    Chxey.CreateStruct(Hx, 0.0);
-    Chxez.CreateStruct(Hx, 0.0);
-    Ceyhx.CreateStruct(Ey, 0.0);
-    Ceyhz.CreateStruct(Ey, 0.0);
-    Chyex.CreateStruct(Hy, 0.0);
-    Chyez.CreateStruct(Hy, 0.0);
-    Cezhy.CreateStruct(Ez, 0.0);
-    Cezhx.CreateStruct(Ez, 0.0);
-    Chzey.CreateStruct(Hz, 0.0);
-    Chzex.CreateStruct(Hz, 0.0);
+    Cexe.create3DArray(Ex, 0.0);
+    Ceye.create3DArray(Ey, 0.0);
+    Ceze.create3DArray(Ez, 0.0);
+    Chxh.create3DArray(Hx, 0.0);
+    Chyh.create3DArray(Hy, 0.0);
+    Chzh.create3DArray(Hz, 0.0);
+    Cexhy.create3DArray(Ex, 0.0);
+    Cexhz.create3DArray(Ex, 0.0);
+    Chxey.create3DArray(Hx, 0.0);
+    Chxez.create3DArray(Hx, 0.0);
+    Ceyhx.create3DArray(Ey, 0.0);
+    Ceyhz.create3DArray(Ey, 0.0);
+    Chyex.create3DArray(Hy, 0.0);
+    Chyez.create3DArray(Hy, 0.0);
+    Cezhy.create3DArray(Ez, 0.0);
+    Cezhx.create3DArray(Ez, 0.0);
+    Chzey.create3DArray(Hz, 0.0);
+    Chzex.create3DArray(Hz, 0.0);
 
     Ez.setName("Ez");
     Ex.setName("Ex");
@@ -102,12 +103,13 @@ void fdtd::setUp() {
     MyDataF sigmaMax = 0.75;
     MyDataF kappaMax = 10;
     MyDataF alphaMax = 0.025;
+	MyDataF alphaOrder=1;
     int pmlOrder = 4;
 
     //pml.initParmeters(dx, dy, dz, m, ma);
     pml.setCPMLRegion(pmlWidth);
     pml.createCPMLArrays(Imax, Jmax, Kmax);
-    pml.initCoefficientArrays(pmlOrder, sigmaMax, kappaMax, alphaMax, epsR, dt, dx, dy, dz,
+    pml.initCoefficientArrays(pmlOrder,alphaOrder, sigmaMax, kappaMax, alphaMax, epsR, dt, dx, dy, dz,
             Ceyhz, Cezhy, Chyez, Chzey,
             Cexhz, Cezhx, Chxez, Chzex,
             Ceyhx, Cexhy, Chyex, Chxey);
