@@ -103,12 +103,13 @@ void fdtd::setUp() {
     MyDataF sigmaMax = 0.75;
     MyDataF kappaMax = 10;
     MyDataF alphaMax = 0.025;
+	MyDataF alphaOrder=1;
     int pmlOrder = 4;
 
     //pml.initParmeters(dx, dy, dz, m, ma);
     pml.setCPMLRegion(pmlWidth);
     pml.createCPMLArrays(Imax, Jmax, Kmax);
-    pml.initCoefficientArrays(pmlOrder, sigmaMax, kappaMax, alphaMax, epsR, dt, dx, dy, dz,
+    pml.initCoefficientArrays(pmlOrder,alphaOrder, sigmaMax, kappaMax, alphaMax, epsR, dt, dx, dy, dz,
             Ceyhz, Cezhy, Chyez, Chzey,
             Cexhz, Cezhx, Chxez, Chzex,
             Ceyhx, Cexhy, Chyex, Chxey);
