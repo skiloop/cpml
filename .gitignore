@@ -27,3 +27,12 @@ nbproject/
 
 # target
 main
+
+# matlab data files
+*.mat
+
+# pictures
+*.eps
+*.jpg
+*.tif
+

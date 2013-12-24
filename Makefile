@@ -34,7 +34,7 @@ TAGET=formulations.pdf fdtd-1d-cpml.pdf
 ###########################
 ## objects
 ###########################
-OBJECTS=cpml.o main.o fdtd.o 
+OBJECTS=main.o fdtd.o 
 
 
 ###########################

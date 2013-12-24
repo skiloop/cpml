@@ -1,16 +1,14 @@
-#ifndef DATA3D_H
-#define DATA3D_H
+/* 
+ * File:   data2d.h
+ * Author: skiloop
+ *
+ * Created on 2013年12月17日, 下午5:08
+ */
+
+#ifndef DATA2D_H
+#define	DATA2D_H
 
 
-#ifdef MATLAB_SIMULATION
-
-#include <engine.h>
-#include <mex.h>
-#ifdef printf
-#undef printf
-#endif
-
-#endif // end MATLAB_SIMULATION
 #include <iostream>
 #include <cstdlib>
 #include <fstream>
@@ -20,6 +18,7 @@ using namespace std;
 
 //#include "microdef.h"
 #define MAX_ARRAY_SIZE 300000
+#include "common.h"
 #include "Point.h"
 
 /**
@@ -28,31 +27,19 @@ using namespace std;
  * p:pointer to store data;
  */
 template<class DataType>
-class data3d {
+class data2d {
 public:
     unsigned int nx;
     unsigned int ny;
-    unsigned int nz;
-    DataType*** p;
+    DataType** p;
 
 public:
     static const std::string OUTPUT_FILE_NAME_TAIL;
-
-#ifdef MATLAB_SIMULATION
-    static unsigned int mMatlabFigureCount;
-    static Engine *ep;
-private:
-    static bool mIsMatlabEngineStarted;
-#endif
 private:
     std::string mName; // name for this to save file
 
 private:
-#ifdef MATLAB_SIMULATION
-    int mMatlabFigureIndex;
-    mxArray *num;
-    mxArray *mMatlabMXArray;
-#endif
+
 public:
 
     /**
@@ -64,27 +51,19 @@ public:
      *
      * when cannot create space for p and p[i],exit program;
      */
-    data3d(unsigned int cx, unsigned int cy, unsigned cz)
-    : nx(cx), ny(cy), nz(cz), p(NULL)
-#ifdef MATLAB_SIMULATION
-    , mMatlabFigureIndex(-1)
-#endif
+    data2d(unsigned int cx, unsigned int cy)
+    : nx(cx), ny(cy),  p(NULL)
     {
         unsigned i, j;
-        if (cx == 0 || cy == 0 || cz == 0) {
+        if (cx == 0 || cy == 0 ) {
             return;
         }
         try {
 
-            p = new DataType**[cx];
+            p = new DataType*[cx];
             for (i = 0; i < cx; i++) {
-                p[i] = new DataType*[cy];
-            }
-            for (i = 0; i < cx; i++) {
-                for (j = 0; j < cy; j++) {
-                    p[i][j] = new DataType[cz];
-                }
-            }
+                p[i] = new DataType[cy];
+            }            
         } catch (exception & e) {
             cerr << e.what() << endl;
             return;
@@ -96,13 +75,10 @@ public:
      * default constructor set
      *  @c nx = 0
      *  @c ny = 0
-     *  @c nz = 0
      *  @c p=NULL
      */
-    data3d() : nx(0), ny(0), nz(0), p(NULL)
-#ifdef MATLAB_SIMULATION
-    , mMatlabFigureIndex(-1)
-#endif
+    data2d() : nx(0), ny(0),  p(NULL)
+
     {
     };
 
@@ -110,20 +86,20 @@ public:
      * copy constructor
      * @param obj
      */
-    data3d(const data3d< DataType > &obj);
+    data2d(const data2d< DataType > &obj);
 
     /**
      * deconstructor
      */
-    ~data3d();
+    ~data2d();
 
     /**
-     * print p in struct data3d
+     * print p in struct data2d
      */
     void printArray();
 
     /**
-     * free space created for data3d @c mst
+     * free space created for data2d @c mst
      */
     void freeArray();
 
@@ -133,31 +109,31 @@ public:
     int resetArray(DataType val = 0);
 
     /**
-     * check p of data3d @c mst is valid
+     * check p of data2d @c mst is valid
      * if p is not NULL and none of its subpointers,then
      * return true,otherwise false
      */
     bool checkArray();
 
     /**
-     * Create Space for struct data3d and initialize its @c nx and @c ny
+     * Create Space for struct data2d and initialize its @c nx and @c ny
      */
-    int create3DArray(unsigned nnx, unsigned nny, unsigned nnz);
+    int create2DArray(unsigned nnx, unsigned nny);
 
     /**
-     * Create Space for struct data3d and initialize its @c nx and @c ny
+     * Create Space for struct data2d and initialize its @c nx and @c ny
      */
-    int create3DArray(unsigned nnx, unsigned nny, unsigned nnz, DataType initVal);
+    int create2DArray(unsigned nnx, unsigned nny, DataType initVal);
 
     /**
      * Copy all p in st to stpre
      * Dimensions of @c st and that of @c pstruct must macth,and both with valid
      * p
      */
-    int backup3DArray(const data3d< DataType > &mstru);
+    int backup2DArray(const data2d< DataType > &mstru);
 
     /**
-     * @brief Save p of  data3d data skipping p rows and p columns
+     * @brief Save p of  data2d data skipping p rows and p columns
      *
      */
     void saveArrayData(const unsigned num, unsigned leap = 0);
@@ -166,7 +142,7 @@ public:
      *
      * @param other
      */
-    void operator=(data3d< DataType > const &other);
+    void operator=(data2d< DataType > const &other);
 
     /**
      *  return this.p[index.x][index.y][index.z]
@@ -218,20 +194,12 @@ public:
      * @param k
      * @param leap
      * @param step
-     */
-    void saveZPlain(unsigned k, unsigned leap, unsigned step);
-
-    /**
-     *
-     * @param k
-     * @param leap
-     * @param step
      * @param type
      */
     void savePlain(unsigned k, unsigned leap, unsigned step, int type);
 
     /**
-     *  Save data at plain s=@c k where s=x,y or z which define by @c type
+     *  Save data at plain s=@c k where s=x,y which define by @c type
      * @param k
      * @param leap
      * @param step
@@ -246,17 +214,17 @@ public:
     void save(int leap = 1);
 
     /**
-     * @brief Create a data3d with the same size;
-     * @param stru the source data3d to be copied.
+     * @brief Create a data2d with the same size;
+     * @param stru the source data2d to be copied.
      * @return
      */
-    int create3DArray(const data3d< DataType > &stru);
+    int create2DArray(const data2d< DataType > &stru);
 
     /**
-     * @brief Create a data3d with the same size as @c stru and initial all var to @c initVal;
-     * @param stru the source data3d to be copied.
+     * @brief Create a data2d with the same size as @c stru and initial all var to @c initVal;
+     * @param stru the source data2d to be copied.
      */
-    int create3DArray(const data3d< DataType > &stru, DataType initVal);
+    int create2DArray(const data2d< DataType > &stru, DataType initVal);
 
     /**
      * set @name to @sn
@@ -282,9 +250,9 @@ public:
 public:
     static int initMatlabEngine();
     static int closeMatlabEngine();
-    bool isNaN(unsigned i, unsigned j, unsigned k);
-    bool isInf(unsigned i, unsigned j, unsigned k);
-    bool isValid(unsigned i, unsigned j, unsigned k);
+    bool isNaN(unsigned i, unsigned j);
+    bool isInf(unsigned i, unsigned j);
+    bool isValid(unsigned i, unsigned j);
     /**
      * when value at (i,j,k) is larger than limit do something define by fun
      * @param i
@@ -293,26 +261,11 @@ public:
      * @param limit
      * @param fun
      */
-    void whenLargerThan(unsigned i, unsigned j, unsigned k, MyDataF limit, void(*fun)());
-private:
-
-    static void setMatlabEngineStarted(bool MatlabEngineStarted) {
-#ifdef MATLAB_SIMULATION
-        mIsMatlabEngineStarted = MatlabEngineStarted;
-#endif
-    }
-public:
-
-    static bool isMatlabEngineStarted() {
-#ifdef MATLAB_SIMULATION
-        return mIsMatlabEngineStarted;
-#else
-        return false;
-#endif
-    }
+    void whenLargerThan(unsigned i, unsigned j, MyDataF limit, void(*fun)());
 
 };
 
-#include "data3d.hpp"
+#include "data2d.hpp"
 
-#endif // DATA3D_H
+#endif	/* DATA2D_H */
+

@@ -100,11 +100,11 @@ void fdtd::setUp() {
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     //  PML parameters
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    MyDataF sigmaMax = 0.75;
-    MyDataF kappaMax = 10;
-    MyDataF alphaMax = 0.025;
-	MyDataF alphaOrder=1;
+    MyDataF sigmaMax = 0.601;
+    MyDataF kappaMax = 0.5;
+    MyDataF alphaMax = 0.1;
     int pmlOrder = 4;
+    MyDataF alphaOrder = 1;
 
     //pml.initParmeters(dx, dy, dz, m, ma);
     pml.setCPMLRegion(pmlWidth);
